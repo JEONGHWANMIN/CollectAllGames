@@ -67,7 +67,6 @@ export class AuthService {
         hashRt: null,
       },
     });
-    return 'logout';
   }
 
   async refreshTokens(userId: number, refreshToken: string) {
