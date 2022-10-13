@@ -55,12 +55,43 @@ export class AuthService {
     return tokens;
   }
 
-  logout() {
+  async logout(userId: number) {
+    await this.prisma.user.updateMany({
+      where: {
+        id: userId,
+        hashRt: {
+          not: null,
+        },
+      },
+      data: {
+        hashRt: null,
+      },
+    });
     return 'logout';
   }
 
-  refreshTokens() {
-    return 'refreshToken';
+  async refreshTokens(userId: number, refreshToken: string) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user) {
+      throw new ForbiddenException('User not found');
+    }
+
+    const decodedRt = await argon2.verify(user.hashRt, refreshToken);
+
+    if (!decodedRt) {
+      throw new ForbiddenException('Refresh token is not valid');
+    }
+
+    const tokens = await this.getTokens(user.id, user.email, user.username);
+
+    await this.updateRtHash(user.id, tokens.refreshToken);
+
+    return tokens;
   }
 
   async getTokens(
