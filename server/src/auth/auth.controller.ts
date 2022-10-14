@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, UseGuards } from '@nestjs/common';
 import { GetCurrentUser, Public } from 'src/common/decorators';
 import { RtGuard } from 'src/common/guards';
 import { AuthService } from './auth.service';
@@ -6,55 +6,71 @@ import { AuthLogInDto, AuthSignUpDto } from './dto';
 import { Tokens } from './types';
 import {
   ApiTags,
-  ApiOperation,
   ApiResponse,
   ApiCreatedResponse,
-  ApiTooManyRequestsResponse,
   ApiBody,
+  ApiOkResponse,
+  ApiForbiddenResponse,
 } from '@nestjs/swagger';
-import { schemas } from './schema';
+import { bodySchemas, responseSchemas } from './schema';
 
 @Controller('auth')
 @ApiTags('Auth API')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Public()
   @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        email: { type: 'string' },
-        username: { type: 'string' },
-        password: { type: 'string' },
-      },
-    },
+    schema: bodySchemas.signup,
   })
   @ApiCreatedResponse({
     status: 201,
     description: '회원가입 완료!',
-    schema: schemas.signup,
+    schema: responseSchemas.signup,
   })
   @ApiResponse({
     status: 403,
     description: 'Forbidden.',
   })
+  @Public()
   @Post('/signup')
   signup(@Body() dto: AuthSignUpDto) {
     return this.authService.signup(dto);
   }
 
+  @ApiBody({
+    schema: bodySchemas.login,
+  })
+  @ApiOkResponse({
+    description: '로그인 성공',
+    schema: responseSchemas.login,
+  })
+  @ApiForbiddenResponse({
+    description: 'Forbidden.',
+  })
   @Public()
+  @HttpCode(200)
   @Post('/login')
   login(@Body() dto: AuthLogInDto): Promise<Tokens> {
     return this.authService.login(dto);
   }
 
+  @ApiOkResponse({
+    description: '로그아웃 성공',
+    schema: responseSchemas.logout,
+  })
+  @HttpCode(200)
   @Post('/logout')
   logout(@GetCurrentUser('userId') userId: number) {
     return this.authService.logout(userId);
   }
 
+  @ApiCreatedResponse({
+    description: '토큰 재발급 성공',
+    schema: responseSchemas.login,
+  })
+  @ApiForbiddenResponse({
+    description: 'Forbidden.',
+  })
   @Public()
   @UseGuards(RtGuard)
   @Post('/refresh-tokens')
