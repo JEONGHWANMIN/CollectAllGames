@@ -9,7 +9,7 @@ import { Tokens } from './types';
 export class AuthService {
   constructor(private prisma: PrismaService, private jwtService: JwtService) {}
 
-  async signup(dto: AuthSignUpDto): Promise<Tokens> {
+  async signup(dto: AuthSignUpDto) {
     const hashedPassword = await argon2.hash(dto.password);
 
     const newUser = await this.prisma.user.create({
@@ -20,15 +20,13 @@ export class AuthService {
       },
     });
 
-    const tokens = await this.getTokens(
-      newUser.id,
-      newUser.email,
-      newUser.username,
-    );
+    if (!newUser) {
+      throw new ForbiddenException('User not found');
+    }
 
-    await this.updateRtHash(newUser.id, tokens.refreshToken);
-
-    return tokens;
+    return {
+      message: 'User created successfully',
+    };
   }
 
   async login(dto: AuthLogInDto): Promise<Tokens> {

@@ -4,14 +4,43 @@ import { RtGuard } from 'src/common/guards';
 import { AuthService } from './auth.service';
 import { AuthLogInDto, AuthSignUpDto } from './dto';
 import { Tokens } from './types';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiCreatedResponse,
+  ApiTooManyRequestsResponse,
+  ApiBody,
+} from '@nestjs/swagger';
+import { schemas } from './schema';
 
 @Controller('auth')
+@ApiTags('Auth API')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Public()
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        email: { type: 'string' },
+        username: { type: 'string' },
+        password: { type: 'string' },
+      },
+    },
+  })
+  @ApiCreatedResponse({
+    status: 201,
+    description: '회원가입 완료!',
+    schema: schemas.signup,
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden.',
+  })
   @Post('/signup')
-  signup(@Body() dto: AuthSignUpDto): Promise<Tokens> {
+  signup(@Body() dto: AuthSignUpDto) {
     return this.authService.signup(dto);
   }
 
