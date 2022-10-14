@@ -1,8 +1,44 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import * as ogs from 'open-graph-scraper';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class PostsService {
+  constructor(private prisma: PrismaService) {}
+
+  async findAll(page: number, size: number) {
+    const posts = await this.prisma.post.findMany();
+
+    if (!posts) {
+      throw new Error('Posts not found');
+    }
+
+    const totalPage = Math.ceil(posts.length / size);
+    const offset = (page - 1) * size;
+    const limit = offset + size;
+
+    const pagenationPage = posts.slice(offset, limit);
+
+    return {
+      posts: pagenationPage,
+      totalPage,
+    };
+  }
+
+  async findOne(id: number) {
+    const post = await this.prisma.post.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!post) {
+      throw new NotFoundException('Post not found');
+    }
+
+    return post;
+  }
+
   async create(link: string) {
     const options = { url: link };
     let data;
@@ -20,6 +56,8 @@ export class PostsService {
 
     console.log(data);
 
-    return 'Hello I:"m a post';
+    return {
+      message: 'Post created successfully',
+    };
   }
 }
