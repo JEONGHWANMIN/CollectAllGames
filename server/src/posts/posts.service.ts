@@ -46,7 +46,15 @@ export class PostsService {
             username: true,
           },
         },
-        comment: true,
+        comment: {
+          include: {
+            user: {
+              select: {
+                username: true,
+              },
+            },
+          },
+        },
       },
     });
 
