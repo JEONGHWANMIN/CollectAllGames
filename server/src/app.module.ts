@@ -4,6 +4,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { AtGuard } from './common/guards';
+import { CommentModule } from './comment/comment.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -12,6 +13,7 @@ import { AtGuard } from './common/guards';
     PostsModule,
     PrismaModule,
     AuthModule,
+    CommentModule,
   ],
   controllers: [],
   providers: [
