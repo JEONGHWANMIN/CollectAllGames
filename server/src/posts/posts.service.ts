@@ -40,13 +40,21 @@ export class PostsService {
       where: {
         id,
       },
-    });
-
-    const comments = await this.prisma.comment.findMany({
-      where: {
-        postId: id,
+      include: {
+        user: {
+          select: {
+            username: true,
+          },
+        },
+        comment: true,
       },
     });
+
+    // const comments = await this.prisma.comment.findMany({
+    //   where: {
+    //     postId: id,
+    //   },
+    // });
 
     if (!post) {
       throw new NotFoundException('Post not found');
@@ -54,7 +62,6 @@ export class PostsService {
 
     return {
       post,
-      comments,
     };
   }
 
