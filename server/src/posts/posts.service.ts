@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import * as ogs from 'open-graph-scraper';
+import { JwtPayload } from 'src/auth/types';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PostDto } from './dto';
 
@@ -40,25 +41,26 @@ export class PostsService {
     return post;
   }
 
-  async create(dto: PostDto) {
-    console.log(dto);
-
-    return 'Hello';
+  async create(dto: PostDto, user: JwtPayload) {
     const options = { url: dto.link };
-    let data;
-    try {
-      const { result }: any = await ogs(options);
-      data = {
-        ogTitle: result.ogTitle,
-        ogDescription: result.ogDescription,
-        ogImageUrl: result.ogImage.url,
-        ogVideoUrl: result.ogVideo.url,
-      };
-    } catch (error) {
-      console.log(error);
-    }
 
-    console.log(data);
+    const { result }: any = await ogs(options);
+
+    const data = {
+      ogTitle: result.ogTitle,
+      ogDescription: result.ogDescription,
+      ogImageUrl: result.ogImage.url,
+      ogVideoUrl: result.ogVideo.url,
+    };
+
+    await this.prisma.post.create({
+      data: {
+        ...dto,
+        imgUrl: data.ogImageUrl,
+        videoUrl: data.ogVideoUrl,
+        userId: user.userId,
+      },
+    });
 
     return {
       message: 'Post created successfully',

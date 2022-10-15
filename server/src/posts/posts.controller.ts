@@ -7,6 +7,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { JwtPayload } from 'src/auth/types';
 import { GetCurrentUser, Public } from 'src/common/decorators';
 import { PostDto } from './dto';
 import { PostsService } from './posts.service';
@@ -31,8 +32,7 @@ export class PostsController {
   }
 
   @Post('')
-  create(@Body() dto: PostDto, @GetCurrentUser() user) {
-    console.log(dto, user);
-    return this.postsService.create(dto);
+  create(@Body() dto: PostDto, @GetCurrentUser() user: JwtPayload) {
+    return this.postsService.create(dto, user);
   }
 }

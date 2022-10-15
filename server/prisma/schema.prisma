@@ -13,22 +13,36 @@ datasource db {
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
-  username      String
+  username  String
   password  String
-  post      Post[] 
-  hashRt String?
+  hashRt    String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  post      Post[]
+  comment   Comment[]
 }
 
 model Post {
   id        Int      @id @default(autoincrement())
   title     String
-  content   String?
+  content   String
+  link      String
   imgUrl    String
   videoUrl  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
+  comment   Comment[]
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  postId    Int
+  post      Post     @relation(fields: [postId], references: [id])
 }
