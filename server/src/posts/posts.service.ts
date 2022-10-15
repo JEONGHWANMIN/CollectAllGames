@@ -9,7 +9,15 @@ export class PostsService {
   constructor(private prisma: PrismaService) {}
 
   async findAll(page: number, size: number) {
-    const posts = await this.prisma.post.findMany();
+    const posts = await this.prisma.post.findMany({
+      include: {
+        user: {
+          select: {
+            username: true,
+          },
+        },
+      },
+    });
 
     if (!posts) {
       throw new Error('Posts not found');
@@ -34,11 +42,20 @@ export class PostsService {
       },
     });
 
+    const comments = await this.prisma.comment.findMany({
+      where: {
+        postId: id,
+      },
+    });
+
     if (!post) {
       throw new NotFoundException('Post not found');
     }
 
-    return post;
+    return {
+      post,
+      comments,
+    };
   }
 
   async create(dto: PostDto, user: JwtPayload) {
