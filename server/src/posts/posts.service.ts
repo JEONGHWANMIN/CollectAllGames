@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import * as ogs from 'open-graph-scraper';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { PostDto } from './dto';
 
 @Injectable()
 export class PostsService {
@@ -39,8 +40,11 @@ export class PostsService {
     return post;
   }
 
-  async create(link: string) {
-    const options = { url: link };
+  async create(dto: PostDto) {
+    console.log(dto);
+
+    return 'Hello';
+    const options = { url: dto.link };
     let data;
     try {
       const { result }: any = await ogs(options);

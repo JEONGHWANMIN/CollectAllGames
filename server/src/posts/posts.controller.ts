@@ -7,7 +7,8 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { Public } from 'src/common/decorators';
+import { GetCurrentUser, Public } from 'src/common/decorators';
+import { PostDto } from './dto';
 import { PostsService } from './posts.service';
 
 @Controller('posts')
@@ -30,8 +31,8 @@ export class PostsController {
   }
 
   @Post('')
-  create(@Body() body: { link: string }) {
-    console.log(body);
-    return this.postsService.create(body.link);
+  create(@Body() dto: PostDto, @GetCurrentUser() user) {
+    console.log(dto, user);
+    return this.postsService.create(dto);
   }
 }
