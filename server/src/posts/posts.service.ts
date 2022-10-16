@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import * as ogs from 'open-graph-scraper';
 import { JwtPayload } from 'src/auth/types';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -20,7 +24,7 @@ export class PostsService {
     });
 
     if (!posts) {
-      throw new Error('Posts not found');
+      throw new NotFoundException('Posts not found');
     }
 
     const totalPage = Math.ceil(posts.length / size);
@@ -58,19 +62,11 @@ export class PostsService {
       },
     });
 
-    // const comments = await this.prisma.comment.findMany({
-    //   where: {
-    //     postId: id,
-    //   },
-    // });
-
     if (!post) {
       throw new NotFoundException('Post not found');
     }
 
-    return {
-      post,
-    };
+    return post;
   }
 
   async create(dto: PostDto, user: JwtPayload) {
@@ -96,6 +92,24 @@ export class PostsService {
 
     return {
       message: 'Post created successfully',
+    };
+  }
+
+  async delete(id: number, user: JwtPayload) {
+    const post = await this.findOne(id);
+
+    if (post.userId !== user.userId) {
+      throw new ForbiddenException('You are not allowed to delete this post');
+    }
+
+    await this.prisma.post.delete({
+      where: {
+        id,
+      },
+    });
+
+    return {
+      message: 'Post deleted successfully',
     };
   }
 }

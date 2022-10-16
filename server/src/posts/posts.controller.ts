@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -26,13 +27,21 @@ export class PostsController {
   }
 
   @Public()
-  @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  @Get(':postId')
+  findOne(@Param('postId', ParseIntPipe) id: number) {
     return this.postsService.findOne(id);
   }
 
   @Post('')
   create(@Body() dto: PostDto, @GetCurrentUser() user: JwtPayload) {
     return this.postsService.create(dto, user);
+  }
+
+  @Delete(':postId')
+  delete(
+    @Param('postId', ParseIntPipe) id: number,
+    @GetCurrentUser() user: JwtPayload,
+  ) {
+    return this.postsService.delete(id, user);
   }
 }
