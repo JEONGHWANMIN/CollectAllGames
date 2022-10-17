@@ -1,8 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
-import { NestFactory, Reflector } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { AtGuard } from './common/guards';
+import { setupSwagger } from './utils/swagger/setting';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,14 +10,7 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
-  const options = new DocumentBuilder()
-    .setTitle('Collect All Games API Docs')
-    .setDescription('API description')
-    .setVersion('1.0.0')
-    .build();
-
-  const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('api-docs', app, document);
+  setupSwagger(app);
 
   await app.listen(8000);
 }
