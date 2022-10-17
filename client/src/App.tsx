@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import React from "react";
 import { RouterProvider } from "react-router-dom";
-import { router } from "./page/router";
+import { router } from "./pages/router";
 
 function App() {
   return (
