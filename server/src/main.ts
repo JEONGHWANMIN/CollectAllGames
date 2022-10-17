@@ -12,15 +12,14 @@ async function bootstrap() {
     }),
   );
   const options = new DocumentBuilder()
-    .setTitle('NestJS Study API Docs')
-    .setDescription('NestJS Study API description')
+    .setTitle('Collect All Games API Docs')
+    .setDescription('API description')
     .setVersion('1.0.0')
     .build();
 
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api-docs', app, document);
-  // const reflector = new Reflector();
-  // app.useGlobalGuards(new AtGuard(reflector));
+
   await app.listen(8000);
 }
 bootstrap();
