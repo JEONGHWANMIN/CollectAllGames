@@ -15,6 +15,8 @@ export class CommentService {
         userId: user.userId,
       },
     });
-    return 'comment created';
+    return {
+      message: 'Comment created successfully',
+    };
   }
 }

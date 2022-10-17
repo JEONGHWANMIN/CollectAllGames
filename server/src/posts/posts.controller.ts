@@ -5,18 +5,26 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
+
 import { JwtPayload } from 'src/auth/types';
 import { GetCurrentUser, Public } from 'src/common/decorators';
-import { PostDto } from './dto';
+import { PostDto, UpdatePostDto } from './dto';
 import { PostsService } from './posts.service';
+import { responseSchemas } from './schema';
 
+@ApiTags('Post API')
 @Controller('posts')
 export class PostsController {
   constructor(private postsService: PostsService) {}
 
+  @ApiBody({
+    schema: responseSchemas.findAll,
+  })
   @Public()
   @Get()
   findAll(
@@ -28,8 +36,8 @@ export class PostsController {
 
   @Public()
   @Get(':postId')
-  findOne(@Param('postId', ParseIntPipe) id: number) {
-    return this.postsService.findOne(id);
+  findOne(@Param('postId', ParseIntPipe) postId: number) {
+    return this.postsService.findOne(postId);
   }
 
   @Post('')
@@ -37,11 +45,20 @@ export class PostsController {
     return this.postsService.create(dto, user);
   }
 
+  @Patch(':postId')
+  update(
+    @Param('postId', ParseIntPipe) postId: number,
+    @GetCurrentUser('userId') userId: number,
+    @Body() dto: UpdatePostDto,
+  ) {
+    return this.postsService.update(postId, userId, dto);
+  }
+
   @Delete(':postId')
   delete(
-    @Param('postId', ParseIntPipe) id: number,
-    @GetCurrentUser() user: JwtPayload,
+    @Param('postId', ParseIntPipe) postId: number,
+    @GetCurrentUser('userId', ParseIntPipe) userId: number,
   ) {
-    return this.postsService.delete(id, user);
+    return this.postsService.delete(postId, userId);
   }
 }

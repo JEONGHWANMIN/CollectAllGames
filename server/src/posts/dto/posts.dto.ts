@@ -10,3 +10,9 @@ export class PostDto {
   @IsString()
   link: string;
 }
+
+export class UpdatePostDto {
+  title: string;
+
+  content: string;
+}

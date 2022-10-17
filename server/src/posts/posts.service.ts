@@ -6,7 +6,7 @@ import {
 import * as ogs from 'open-graph-scraper';
 import { JwtPayload } from 'src/auth/types';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { PostDto } from './dto';
+import { PostDto, UpdatePostDto } from './dto';
 
 @Injectable()
 export class PostsService {
@@ -39,10 +39,10 @@ export class PostsService {
     };
   }
 
-  async findOne(id: number) {
+  async findOne(postId: number) {
     const post = await this.prisma.post.findUnique({
       where: {
-        id,
+        id: postId,
       },
       include: {
         user: {
@@ -95,16 +95,39 @@ export class PostsService {
     };
   }
 
-  async delete(id: number, user: JwtPayload) {
-    const post = await this.findOne(id);
+  async update(postId: number, userId: number, dto: UpdatePostDto) {
+    console.log(postId, userId, dto);
 
-    if (post.userId !== user.userId) {
+    const post = await this.findOne(postId);
+
+    if (post.userId !== userId) {
+      throw new ForbiddenException('You are not allowed to update this post');
+    }
+
+    await this.prisma.post.update({
+      where: {
+        id: postId,
+      },
+      data: {
+        ...dto,
+      },
+    });
+
+    return {
+      message: 'Post updated successfully',
+    };
+  }
+
+  async delete(postId: number, userId: number) {
+    const post = await this.findOne(postId);
+
+    if (post.userId !== userId) {
       throw new ForbiddenException('You are not allowed to delete this post');
     }
 
     await this.prisma.post.delete({
       where: {
-        id,
+        id: postId,
       },
     });
 
