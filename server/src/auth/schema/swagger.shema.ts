@@ -2,7 +2,7 @@ export const responseSchemas = {
   signup: {
     type: 'object',
     properties: {
-      message: { type: 'string' },
+      message: { type: 'string', example: 'User created successfully' },
     },
   },
   login: {
@@ -15,7 +15,7 @@ export const responseSchemas = {
   logout: {
     type: 'object',
     properties: {
-      message: { type: 'string' },
+      message: { type: 'string', example: 'User logged out successfully' },
     },
   },
 };

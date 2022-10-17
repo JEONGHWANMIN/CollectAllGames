@@ -11,6 +11,7 @@ import {
   ApiBody,
   ApiOkResponse,
   ApiForbiddenResponse,
+  ApiHeader,
 } from '@nestjs/swagger';
 import { bodySchemas, responseSchemas } from './schema';
 
@@ -54,6 +55,10 @@ export class AuthController {
     return this.authService.login(dto);
   }
 
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+  })
   @ApiOkResponse({
     description: '로그아웃 성공',
     schema: responseSchemas.logout,
@@ -64,6 +69,10 @@ export class AuthController {
     return this.authService.logout(userId);
   }
 
+  @ApiHeader({
+    name: 'refresh-token',
+    description: 'refreshToken',
+  })
   @ApiCreatedResponse({
     description: '토큰 재발급 성공',
     schema: responseSchemas.login,
