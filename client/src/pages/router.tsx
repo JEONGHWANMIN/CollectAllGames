@@ -1,5 +1,6 @@
+/** @jsxImportSource @emotion/react */
 import React from "react";
-import { createBrowserRouter, Route, redirect } from "react-router-dom";
+import { createBrowserRouter, redirect } from "react-router-dom";
 import Home from "./Home";
 import Login from "./Login";
 import SignUp from "./SignUp";
@@ -7,13 +8,13 @@ import SignUp from "./SignUp";
 export const router = createBrowserRouter([
   {
     path: "/",
-    loader: () => {
-      const user = "HwanMin";
-      if (false) {
-        throw redirect("/login");
-      }
-      return user;
-    },
+    // loader: () => {
+    //   const user = "HwanMin";
+    //   if (false) {
+    //     throw redirect("/login");
+    //   }
+    //   return user;
+    // },
     element: <Home />,
   },
   {
