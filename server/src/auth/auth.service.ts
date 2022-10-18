@@ -137,4 +137,24 @@ export class AuthService {
       },
     });
   }
+
+  async validateEmail(email: string) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (user) {
+      return {
+        message: 'Email is already taken',
+        duplicate: true,
+      };
+    }
+
+    return {
+      message: 'Email is available',
+      duplicate: false,
+    };
+  }
 }
