@@ -19,5 +19,5 @@ const Button = styled.button`
   background-color: ${colors.mainColor};
   cursor: pointer;
   border-radius: 10px;
-  font-size: 15px;
+  font-size: 16px;
 `;

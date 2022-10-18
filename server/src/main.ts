@@ -10,6 +10,12 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
+  app.enableCors({
+    origin: 'http://localhost:3000',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+  });
   setupSwagger(app);
 
   await app.listen(8000);

@@ -6,9 +6,20 @@ import { colors } from "src/style/colors";
 interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  error?: boolean;
+  errorMessages?: string;
+  value: string;
 }
 
-function LabelInput({ label, type, onChange, name }: Props) {
+function LabelInput({
+  label,
+  type,
+  onChange,
+  name,
+  error,
+  errorMessages,
+  value,
+}: Props) {
   const [focus, setFocus] = useState(false);
   const handleBlur = () => {
     setFocus(false);
@@ -26,6 +37,11 @@ function LabelInput({ label, type, onChange, name }: Props) {
         onFocus={handleFocus}
         onChange={onChange}
       />
+      {error && value.length >= 1 ? (
+        <Error>{errorMessages}</Error>
+      ) : (
+        <Error></Error>
+      )}
     </Container>
   );
 }
@@ -54,4 +70,10 @@ const Input = styled.input`
     outline: none;
     border-color: ${colors.mainColor};
   }
+`;
+
+const Error = styled.div`
+  color: red;
+  font-size: 12px;
+  height: 15px;
 `;
