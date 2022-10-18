@@ -6,5 +6,12 @@ export const reset = css`
     padding: 0;
     box-sizing: border-box;
     font-family: "Noto Sans KR", sans-serif;
+    list-style: none;
   }
+`;
+
+export const flextCenter = css`
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
