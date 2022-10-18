@@ -9,8 +9,38 @@ import { Tokens } from './types';
 export class AuthService {
   constructor(private prisma: PrismaService, private jwtService: JwtService) {}
 
+  async validateEmail(email: string) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (user) {
+      return {
+        message: 'Email is already taken',
+        duplicate: true,
+      };
+    }
+
+    return {
+      message: 'Email is available',
+      duplicate: false,
+    };
+  }
+
   async signup(dto: AuthSignUpDto) {
     const hashedPassword = await argon2.hash(dto.password);
+
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email: dto.email,
+      },
+    });
+
+    if (user) {
+      throw new ForbiddenException('Email is already taken');
+    }
 
     const newUser = await this.prisma.user.create({
       data: {
@@ -21,7 +51,7 @@ export class AuthService {
     });
 
     if (!newUser) {
-      throw new ForbiddenException('User not found');
+      throw new ForbiddenException('User not created');
     }
 
     return {
@@ -136,25 +166,5 @@ export class AuthService {
         hashRt: hash,
       },
     });
-  }
-
-  async validateEmail(email: string) {
-    const user = await this.prisma.user.findUnique({
-      where: {
-        email,
-      },
-    });
-
-    if (user) {
-      return {
-        message: 'Email is already taken',
-        duplicate: true,
-      };
-    }
-
-    return {
-      message: 'Email is available',
-      duplicate: false,
-    };
   }
 }
