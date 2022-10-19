@@ -18,6 +18,7 @@ function Layout({ children }: Props) {
 export default Layout;
 
 const Container = styled.div`
+  height: 100vh;
   background-color: #f4f4f4;
   display: flex;
   flex-direction: column;

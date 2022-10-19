@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import React, { useState } from "react";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { authService } from "src/apis/authAPI";
 import LabelInput from "src/components/LabelInput/LabelInput";
 import Layout from "src/components/Layout/Layout";
@@ -15,6 +16,16 @@ interface FormType {
   passwordConfirm: string;
 }
 
+interface ValidationService {
+  emailValidate: (email: string) => boolean;
+  passwordValidate: (password: string) => boolean;
+  passwordConfirmValidate: (
+    password: string,
+    passwordConfirm: string
+  ) => boolean;
+  userNameValidate: (username: string) => boolean;
+}
+
 interface ValidationType {
   email: boolean;
   username: boolean;
@@ -22,18 +33,32 @@ interface ValidationType {
   passwordConfirm: boolean;
 }
 
+const initialData = {
+  email: "",
+  username: "",
+  password: "",
+  passwordConfirm: "",
+};
+
 function SignUp() {
-  const initialData = {
-    email: "",
-    username: "",
-    password: "",
-    passwordConfirm: "",
-  };
+  const navigate = useNavigate();
+
   const [isDuplicate, setIsDuplicate] = useState<boolean>();
+
+  const handleSignUp = async (formData: typeof initialData) => {
+    const result = await authService.SignUp(formData);
+    if (result?.status === 201) {
+      alert("회원가입이 완료되었습니다.");
+      return navigate("/login");
+    }
+    alert("회원가입에 실패했습니다.");
+  };
+
   const { formData, handleChange, handleSubmit, errors } = useForm<
     FormType,
+    ValidationService,
     ValidationType
-  >(initialData, validateService);
+  >(initialData, handleSignUp, validateService);
 
   const { email, username, password, passwordConfirm } = formData;
 
@@ -42,11 +67,12 @@ function SignUp() {
       setIsDuplicate(res?.duplicate);
     });
   }, [email]);
+
   return (
     <Layout>
-      <Container onSubmit={(e) => handleSubmit(e, () => console.log("전송"))}>
+      <Container>
         <Title>회원가입</Title>
-        <Form>
+        <Form onSubmit={handleSubmit}>
           <LabelInput
             label="이메일"
             name="email"
@@ -94,7 +120,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 250px;
+  margin-top: 150px;
   width: 100%;
   height: 600px;
   background-color: white;
@@ -113,11 +139,4 @@ const Form = styled.form`
   width: 100%;
   flex-direction: column;
   align-items: center;
-`;
-
-const Error = styled.div`
-  color: red;
-  font-size: 12px;
-  height: 15px;
-  left: 0;
 `;

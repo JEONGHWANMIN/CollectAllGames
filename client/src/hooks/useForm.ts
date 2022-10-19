@@ -3,17 +3,15 @@ import React, { useState } from "react";
 interface ReturnsType<T, K> {
   formData: T;
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSubmit: (
-    e: React.FormEvent<HTMLDivElement>,
-    callback: () => void
-  ) => void;
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   errors: K;
 }
+
 interface FormType {
   email: string;
   password: string;
-  passwordConfirm: string;
-  username: string;
+  passwordConfirm?: string;
+  username?: string;
 }
 
 interface validateType {
@@ -26,9 +24,10 @@ interface validateType {
   userNameValidate: (username: string) => boolean;
 }
 
-function useForm<T extends FormType, K>(
+function useForm<T extends FormType, V extends validateType, K>(
   initialState: T,
-  validation: validateType
+  submitCallback: (formData: T) => void,
+  validation?: V
 ): ReturnsType<T, K> {
   const [formData, setFormData] = useState(initialState);
   const [errors, setErrors] = useState({} as K);
@@ -43,21 +42,21 @@ function useForm<T extends FormType, K>(
     if (e.target.name === "email") {
       setErrors({
         ...errors,
-        email: validation.emailValidate(e.target.value),
+        email: validation?.emailValidate(e.target.value),
       });
     }
 
     if (e.target.name === "password") {
       setErrors({
         ...errors,
-        password: validation.passwordValidate(e.target.value),
+        password: validation?.passwordValidate(e.target.value),
       });
     }
 
     if (e.target.name === "passwordConfirm") {
       setErrors({
         ...errors,
-        passwordConfirm: validation.passwordConfirmValidate(
+        passwordConfirm: validation?.passwordConfirmValidate(
           formData.password,
           e.target.value
         ),
@@ -67,19 +66,15 @@ function useForm<T extends FormType, K>(
     if (e.target.name === "username") {
       setErrors({
         ...errors,
-        username: validation.userNameValidate(e.target.value),
+        username: validation?.userNameValidate(e.target.value),
       });
     }
   };
 
-  const handleSubmit = (
-    e: React.FormEvent<HTMLDivElement>,
-    callback: () => void
-  ) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    console.log(formData);
-    callback();
+    submitCallback(formData);
     setIsLoading(false);
   };
 
