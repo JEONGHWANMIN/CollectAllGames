@@ -22,6 +22,12 @@ export const responseSchemas = {
                 username: { type: 'string' },
               },
             },
+            _count: {
+              type: 'object',
+              properties: {
+                comment: { type: 'number' },
+              },
+            },
           },
         },
       },

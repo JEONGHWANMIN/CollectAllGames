@@ -20,6 +20,11 @@ export class PostsService {
             username: true,
           },
         },
+        _count: {
+          select: {
+            comment: true,
+          },
+        },
       },
     });
 
