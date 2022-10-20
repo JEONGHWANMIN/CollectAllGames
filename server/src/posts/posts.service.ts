@@ -65,6 +65,17 @@ export class PostsService {
   }
 
   async findOne(postId: number) {
+    await this.prisma.post.update({
+      where: {
+        id: postId,
+      },
+      data: {
+        view: {
+          increment: 1,
+        },
+      },
+    });
+
     const post = await this.prisma.post.findUnique({
       where: {
         id: postId,
@@ -84,6 +95,15 @@ export class PostsService {
             },
           },
         },
+        tags: {
+          select: {
+            tag: {
+              select: {
+                title: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -93,8 +113,10 @@ export class PostsService {
     const response = {
       ...post,
       username: post.user.username,
+      tag: post.tags.map((tag) => tag.tag.title),
     };
 
+    delete response.tags;
     delete response.user;
 
     return response;
