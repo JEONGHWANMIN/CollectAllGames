@@ -25,6 +25,11 @@ export class PostsService {
             comment: true,
           },
         },
+        tag: {
+          select: {
+            tag: true,
+          },
+        },
       },
     });
 
@@ -32,11 +37,26 @@ export class PostsService {
       throw new NotFoundException('Posts not found');
     }
 
+    const result = posts.map((post) => {
+      return {
+        ...post,
+        username: post.user.username,
+        commentCount: post._count.comment,
+        tags: post.tag.map((tag) => tag.tag.title),
+      };
+    });
+
+    result.forEach((post) => {
+      delete post.user;
+      delete post.tag;
+      delete post._count;
+    });
+
     const totalPage = Math.ceil(posts.length / size);
     const offset = (page - 1) * size;
     const limit = offset + size;
 
-    const pagenationPage = posts.slice(offset, limit);
+    const pagenationPage = result.slice(offset, limit);
 
     return {
       posts: pagenationPage,
