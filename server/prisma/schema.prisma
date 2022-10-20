@@ -34,6 +34,7 @@ model Post {
   userId    Int
   user      User     @relation(fields: [userId], references: [id] , onDelete: Cascade)
   comment   Comment[]
+  tag  PostTags[]
 }
 
 model Comment {
@@ -45,4 +46,19 @@ model Comment {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   postId    Int
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model PostTags {
+  id     Int   @id @default(autoincrement())
+  post   Post? @relation(fields: [postId], references: [id])
+  tag    Tag?  @relation(fields: [tagId], references: [id])
+  postId Int?
+  tagId  Int?
+}
+
+
+model Tag {
+  id        Int      @id @default(autoincrement())
+  title     String
+  posts PostTags[]
 }
