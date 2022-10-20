@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { ArrayMaxSize, IsString } from 'class-validator';
 
 export class PostDto {
   @IsString()
@@ -9,6 +9,9 @@ export class PostDto {
 
   @IsString()
   link: string;
+
+  @ArrayMaxSize(3)
+  tags: string[];
 }
 
 export class UpdatePostDto {

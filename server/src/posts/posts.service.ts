@@ -25,7 +25,7 @@ export class PostsService {
             comment: true,
           },
         },
-        tag: {
+        tags: {
           select: {
             tag: true,
           },
@@ -42,13 +42,13 @@ export class PostsService {
         ...post,
         username: post.user.username,
         commentCount: post._count.comment,
-        tags: post.tag.map((tag) => tag.tag.title),
+        tag: post.tags.map((tag) => tag.tag.title),
       };
     });
 
     result.forEach((post) => {
       delete post.user;
-      delete post.tag;
+      delete post.tags;
       delete post._count;
     });
 
@@ -90,28 +90,54 @@ export class PostsService {
     if (!post) {
       throw new NotFoundException('Post not found');
     }
+    const response = {
+      ...post,
+      username: post.user.username,
+    };
 
-    return post;
+    delete response.user;
+
+    return response;
   }
 
   async create(dto: PostDto, user: JwtPayload) {
+    const tagMap = dto.tags.map((tag) => {
+      return {
+        tag: {
+          connectOrCreate: {
+            where: {
+              title: tag,
+            },
+            create: {
+              title: tag,
+            },
+          },
+        },
+      };
+    });
+
     const options = { url: dto.link };
 
     const { result }: any = await ogs(options);
 
     const data = {
-      ogTitle: result.ogTitle,
-      ogDescription: result.ogDescription,
+      // ogTitle: result.ogTitle,
+      // ogDescription: result.ogDescription,
       ogImageUrl: result.ogImage.url,
       ogVideoUrl: result.ogVideo.url,
     };
 
     await this.prisma.post.create({
       data: {
-        ...dto,
+        title: dto.title,
+        link: dto.link,
+        content: dto.content,
         imgUrl: data.ogImageUrl,
         videoUrl: data.ogVideoUrl,
         userId: user.userId,
+        tags: {
+          create: tagMap,
+        },
       },
     });
 
