@@ -5,6 +5,7 @@ import { reset } from "./style/style";
 import "./style/fonts.css";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./pages/router";
+import { UserProvider } from "./context/userContext";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -12,7 +13,9 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <Global styles={reset} />
-    <RouterProvider router={router} />
+    <UserProvider>
+      <Global styles={reset} />
+      <RouterProvider router={router} />
+    </UserProvider>
   </React.StrictMode>
 );

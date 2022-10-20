@@ -1,16 +1,29 @@
-import React, { useEffect, useRef } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import styled from "@emotion/styled";
 import { flextCenter } from "src/style/style";
 import { HiUserCircle } from "react-icons/hi";
 import { useState } from "react";
+import { useUserState } from "src/context/userContext";
+
+interface UserState {
+  email: string;
+  username: string;
+  accessToken: string;
+}
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+
   const node = useRef(
     null
   ) as unknown as React.MutableRefObject<HTMLDivElement>;
 
+  const [user, setValue] = useUserState() as [
+    UserState,
+    Dispatch<SetStateAction<UserState>>
+  ];
+  console.log(user);
   useEffect(() => {
     const clickOutside = (e: MouseEvent) => {
       if (

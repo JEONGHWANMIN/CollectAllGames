@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import React from "react";
-import { flextCenter } from "src/style/style";
+
 import Header from "../Common/Header";
 
 interface Props {

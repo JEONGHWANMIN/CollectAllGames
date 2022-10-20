@@ -1,16 +1,25 @@
 import styled from "@emotion/styled";
-import React from "react";
+import jwtDecode from "jwt-decode";
+import React, { Dispatch, SetStateAction } from "react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "src/apis/authAPI";
 import LabelInput from "src/components/LabelInput/LabelInput";
 import Layout from "src/components/Layout/Layout";
 import SubmitButton from "src/components/SubmitButton/SubmitButton";
+import { useUserState } from "src/context/userContext";
 import useForm from "src/hooks/useForm";
+import { setCookie } from "src/utils/cookie";
 
 const initialData = {
   email: "",
   password: "",
 };
+
+interface UserState {
+  email: string;
+  username: string;
+  accessToken: string;
+}
 
 interface FormType {
   email: string;
@@ -23,14 +32,34 @@ interface ValidationType {
   password: boolean;
 }
 
+interface JwtPayload {
+  email: string;
+  username: string;
+  iat: number;
+  exp: number;
+}
+
 function Login() {
   const navigate = useNavigate();
 
+  const [user, setUser] = useUserState() as [
+    UserState,
+    Dispatch<SetStateAction<UserState>>
+  ];
+
+  console.log(user);
+
   const handleLogin = async (formData: typeof initialData) => {
-    console.log("FormData", formData);
     const result = await authService.Login(formData);
     if (result?.status === 200) {
-      console.log(result.data);
+      const { accessToken, refreshToken } = result.data;
+      setCookie("refreshToken", refreshToken);
+      const decode: JwtPayload = jwtDecode(accessToken);
+      setUser({
+        email: decode.email,
+        username: decode.username,
+        accessToken: accessToken,
+      });
       alert("로그인 성공");
       // return navigate("/");
     }
