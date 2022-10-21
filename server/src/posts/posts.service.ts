@@ -34,8 +34,6 @@ export class PostsService {
       },
     });
 
-    console.log(posts);
-
     if (!posts) {
       throw new NotFoundException('Posts not found');
     }
