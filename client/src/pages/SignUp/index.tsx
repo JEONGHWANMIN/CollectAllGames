@@ -3,9 +3,9 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "src/apis/authAPI";
-import LabelInput from "src/components/LabelInput/LabelInput";
+import LabelInput from "src/components/Common/LabelInput";
 import Layout from "src/components/Layout/Layout";
-import SubmitButton from "src/components/SubmitButton/SubmitButton";
+import SubmitButton from "src/components/Common/SubmitButton";
 import useForm from "src/hooks/useForm";
 import { validateService } from "src/utils/validation";
 

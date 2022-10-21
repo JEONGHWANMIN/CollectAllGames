@@ -3,9 +3,9 @@ import jwtDecode from "jwt-decode";
 import React, { Dispatch, SetStateAction } from "react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "src/apis/authAPI";
-import LabelInput from "src/components/LabelInput/LabelInput";
+import LabelInput from "src/components/Common/LabelInput";
 import Layout from "src/components/Layout/Layout";
-import SubmitButton from "src/components/SubmitButton/SubmitButton";
+import SubmitButton from "src/components/Common/SubmitButton";
 import { useUserState } from "src/context/userContext";
 import useForm from "src/hooks/useForm";
 import { setCookie } from "src/utils/cookie";
@@ -19,6 +19,7 @@ interface UserState {
   email: string;
   username: string;
   accessToken: string;
+  userId: number;
 }
 
 interface FormType {
@@ -35,6 +36,7 @@ interface ValidationType {
 interface JwtPayload {
   email: string;
   username: string;
+  userId: number;
   iat: number;
   exp: number;
 }
@@ -56,12 +58,11 @@ function Login() {
       setCookie("refreshToken", refreshToken);
       const decode: JwtPayload = jwtDecode(accessToken);
       setUser({
-        email: decode.email,
-        username: decode.username,
+        ...decode,
         accessToken: accessToken,
       });
       alert("로그인 성공");
-      // return navigate("/");
+      return navigate("/");
     }
     alert("로그인 실패");
   };

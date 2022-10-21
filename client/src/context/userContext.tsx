@@ -8,6 +8,7 @@ interface UserType {
   email: string;
   username: string;
   accessToken: string;
+  userId: number;
 }
 
 const UserContext = createContext<[UserType, (user: UserType) => void] | null>(
@@ -19,6 +20,7 @@ export function UserProvider({ children }: Props) {
     email: "",
     username: "",
     accessToken: "",
+    userId: 0,
   });
   const setUser = (user: UserType) => {
     setValue(user);

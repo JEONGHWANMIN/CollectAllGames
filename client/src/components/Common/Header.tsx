@@ -10,6 +10,7 @@ interface UserState {
   email: string;
   username: string;
   accessToken: string;
+  userId: number;
 }
 
 function Header() {
