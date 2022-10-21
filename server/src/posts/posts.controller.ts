@@ -119,4 +119,20 @@ export class PostsController {
   ) {
     return this.postsService.delete(postId, userId);
   }
+
+  @Post(':postId/like')
+  like(
+    @Param('postId', ParseIntPipe) postId: number,
+    @GetCurrentUser('userId', ParseIntPipe) userId: number,
+  ) {
+    return this.postsService.like(postId, userId);
+  }
+
+  @Delete(':postId/like')
+  unlike(
+    @Param('postId', ParseIntPipe) postId: number,
+    @GetCurrentUser('userId', ParseIntPipe) userId: number,
+  ) {
+    return this.postsService.unlike(postId, userId);
+  }
 }

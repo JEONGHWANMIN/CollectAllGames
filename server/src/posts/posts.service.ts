@@ -23,6 +23,7 @@ export class PostsService {
         _count: {
           select: {
             comment: true,
+            likes: true,
           },
         },
         tags: {
@@ -33,6 +34,8 @@ export class PostsService {
       },
     });
 
+    console.log(posts);
+
     if (!posts) {
       throw new NotFoundException('Posts not found');
     }
@@ -42,6 +45,7 @@ export class PostsService {
         ...post,
         username: post.user.username,
         commentCount: post._count.comment,
+        likeCount: post._count.likes,
         tag: post.tags.map((tag) => tag.tag.title),
       };
     });
@@ -102,6 +106,11 @@ export class PostsService {
                 title: true,
               },
             },
+          },
+        },
+        likes: {
+          select: {
+            userId: true,
           },
         },
       },
@@ -206,6 +215,36 @@ export class PostsService {
 
     return {
       message: 'Post deleted successfully',
+    };
+  }
+
+  async like(postId: number, userId: number) {
+    await this.prisma.like.create({
+      data: {
+        postId,
+        userId,
+      },
+    });
+
+    return {
+      message: 'Post liked successfully',
+      like: true,
+    };
+  }
+
+  async unlike(postId: number, userId: number) {
+    await this.prisma.like.delete({
+      where: {
+        userId_postId: {
+          postId,
+          userId,
+        },
+      },
+    });
+
+    return {
+      message: 'Post unliked successfully',
+      like: false,
     };
   }
 }
