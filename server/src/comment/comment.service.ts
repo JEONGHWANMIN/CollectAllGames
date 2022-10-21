@@ -19,4 +19,26 @@ export class CommentService {
       message: 'Comment created successfully',
     };
   }
+
+  async delete(commentId: number, userId: number) {
+    const comment = await this.prisma.comment.findUnique({
+      where: {
+        id: commentId,
+      },
+    });
+
+    if (comment.userId !== userId) {
+      throw new Error('You are not authorized to delete this comment');
+    }
+
+    await this.prisma.comment.delete({
+      where: {
+        id: commentId,
+      },
+    });
+
+    return {
+      message: 'Comment deleted successfully',
+    };
+  }
 }
