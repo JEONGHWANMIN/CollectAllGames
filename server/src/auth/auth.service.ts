@@ -136,7 +136,7 @@ export class AuthService {
     };
 
     const atOptions = {
-      expiresIn: 60 * 15,
+      expiresIn: 60 * 1,
       secret: 'at-secret',
     };
 
