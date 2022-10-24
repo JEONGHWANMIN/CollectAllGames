@@ -12,7 +12,7 @@ import { PostDto, UpdatePostDto } from './dto';
 export class PostsService {
   constructor(private prisma: PrismaService) {}
 
-  async findAll(page: number, size: number) {
+  async findAll(page: number, size: number, userId?: number | undefined) {
     const posts = await this.prisma.post.findMany({
       include: {
         user: {
@@ -31,6 +31,11 @@ export class PostsService {
             tag: true,
           },
         },
+        likes: {
+          select: {
+            userId: true,
+          },
+        },
       },
     });
 
@@ -38,27 +43,30 @@ export class PostsService {
       throw new NotFoundException('Posts not found');
     }
 
-    const result = posts.map((post) => {
+    const response = posts.map((post) => {
       return {
         ...post,
         username: post.user.username,
         commentCount: post._count.comment,
         likeCount: post._count.likes,
         tag: post.tags.map((tag) => tag.tag.title),
+        like: post.likes.some((like) => like.userId === userId),
       };
     });
 
-    result.forEach((post) => {
+    response.forEach((post) => {
       delete post.user;
       delete post.tags;
       delete post._count;
+      delete post.videoUrl;
+      delete post.likes;
     });
 
     const totalPage = Math.ceil(posts.length / size);
     const offset = (page - 1) * size;
     const limit = offset + size;
 
-    const pagenationPage = result.slice(offset, limit);
+    const pagenationPage = response.slice(offset, limit);
 
     return {
       posts: pagenationPage,
@@ -66,7 +74,7 @@ export class PostsService {
     };
   }
 
-  async findOne(postId: number) {
+  async findOne(postId: number, userId?: number | undefined) {
     await this.prisma.post.update({
       where: {
         id: postId,
@@ -121,10 +129,12 @@ export class PostsService {
       ...post,
       username: post.user.username,
       tag: post.tags.map((tag) => tag.tag.title),
+      like: post.likes.some((like) => like.userId === userId),
     };
 
     delete response.tags;
     delete response.user;
+    delete response.likes;
 
     return response;
   }
@@ -147,13 +157,13 @@ export class PostsService {
 
     const options = { url: dto.link };
 
-    const { result }: any = await ogs(options);
+    const { response }: any = await ogs(options);
 
     const data = {
-      // ogTitle: result.ogTitle,
-      // ogDescription: result.ogDescription,
-      ogImageUrl: result.ogImage.url,
-      ogVideoUrl: result.ogVideo.url,
+      // ogTitle: response.ogTitle,
+      // ogDescription: response.ogDescription,
+      ogImageUrl: response.ogImage.url,
+      ogVideoUrl: response.ogVideo.url,
     };
 
     await this.prisma.post.create({

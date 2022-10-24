@@ -3,11 +3,14 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
+  Headers,
   Param,
   ParseIntPipe,
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -19,9 +22,11 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { AtStrategy } from 'src/auth/strategies';
 
 import { JwtPayload } from 'src/auth/types';
 import { GetCurrentUser, Public } from 'src/common/decorators';
+import { AtGuard } from 'src/common/guards';
 import { PostDto, UpdatePostDto } from './dto';
 import { PostsService } from './posts.service';
 import { bodySchemas, responseSchemas } from './schema';
@@ -39,13 +44,14 @@ export class PostsController {
     description: '게시글 목록 조회 성공',
     schema: responseSchemas.findAll,
   })
-  @Public()
   @Get()
+  @Public()
   findAll(
     @Query('page', ParseIntPipe) page: number,
     @Query('size', ParseIntPipe) size: number,
+    @GetCurrentUser() user: JwtPayload,
   ) {
-    return this.postsService.findAll(page, size);
+    return this.postsService.findAll(page, size, user?.userId);
   }
 
   @ApiNotFoundResponse({
@@ -58,8 +64,11 @@ export class PostsController {
   })
   @Public()
   @Get(':postId')
-  findOne(@Param('postId', ParseIntPipe) postId: number) {
-    return this.postsService.findOne(postId);
+  findOne(
+    @Param('postId', ParseIntPipe) postId: number,
+    @GetCurrentUser() user: JwtPayload,
+  ) {
+    return this.postsService.findOne(postId, user?.userId);
   }
 
   @ApiHeader({
