@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
 import React from "react";
-
 import Header from "../Common/Header";
 
 interface Props {
@@ -18,7 +17,6 @@ function Layout({ children }: Props) {
 export default Layout;
 
 const Container = styled.div`
-  height: 100vh;
   background-color: #f4f4f4;
   display: flex;
   flex-direction: column;
@@ -29,6 +27,5 @@ const Body = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 95.7vh;
   width: 650px;
 `;
