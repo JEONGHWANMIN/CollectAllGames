@@ -3,14 +3,11 @@ import {
   Controller,
   Delete,
   Get,
-  Header,
-  Headers,
   Param,
   ParseIntPipe,
   Patch,
   Post,
   Query,
-  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -22,11 +19,8 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { AtStrategy } from 'src/auth/strategies';
-
 import { JwtPayload } from 'src/auth/types';
 import { GetCurrentUser, Public } from 'src/common/decorators';
-import { AtGuard } from 'src/common/guards';
 import { PostDto, UpdatePostDto } from './dto';
 import { PostsService } from './posts.service';
 import { bodySchemas, responseSchemas } from './schema';
@@ -51,6 +45,7 @@ export class PostsController {
     @Query('size', ParseIntPipe) size: number,
     @GetCurrentUser() user: JwtPayload,
   ) {
+    console.log('user', user);
     return this.postsService.findAll(page, size, user?.userId);
   }
 

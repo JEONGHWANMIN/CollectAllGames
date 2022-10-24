@@ -14,7 +14,11 @@ export class AtGuard extends AuthGuard('jwt') {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
 
-    if (request.headers && request.headers.authorization) {
+    if (
+      request.headers &&
+      request.headers.authorization &&
+      !request.headers['refresh-token']
+    ) {
       return super.canActivate(context);
     }
 

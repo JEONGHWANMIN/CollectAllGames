@@ -5,7 +5,7 @@ import { JwtPayload } from '../types';
 export class RtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
   constructor() {
     super({
-      jwtFromRequest: ExtractJwt.fromHeader('refresh-token'),
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       secretOrKey: 'rt-secret',
       passReqToCallback: true,
@@ -13,8 +13,9 @@ export class RtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
   }
 
   validate(req: Request, payload: JwtPayload) {
-    const refreshToken = req.get('refresh-token');
-
+    console.log(req);
+    const refreshToken = req.get('authorization').split(' ')[1];
+    console.log(refreshToken);
     return {
       ...payload,
       refreshToken,
