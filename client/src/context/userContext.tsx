@@ -35,7 +35,6 @@ export function UserProvider({ children }: Props) {
 export function useUserState() {
   const value = useContext(UserContext);
 
-  console.log("Value", value);
   if (value === undefined) {
     throw new Error("useCounterState should be used within CounterProvider");
   }

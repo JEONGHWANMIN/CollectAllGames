@@ -21,18 +21,21 @@ interface LoginType {
   password: string;
 }
 
-async function EmailDuplicate(email: string) {
+interface LoginBody {
+  accessToken: string;
+  refreshToken: string;
+}
+
+async function emailDuplicate(email: string) {
   try {
-    const response = await instance.get<Duplicate>(
-      `/auth/check?email=${email}`
-    );
+    const response = await instance.get<Duplicate>(`/auth/check?email=${email}`);
     return response.data;
   } catch (e) {
     console.log(e);
   }
 }
 
-async function SignUp(formData: SignUpType) {
+async function signUp(formData: SignUpType) {
   try {
     const response = await instance.post("/auth/signup", formData);
     return response;
@@ -41,17 +44,17 @@ async function SignUp(formData: SignUpType) {
   }
 }
 
-async function Login(formData: LoginType) {
+async function login(formData: LoginType) {
   try {
-    const response = await instance.post("/auth/login", formData);
-    return response;
+    const response = await instance.post<LoginBody>("/auth/login", formData);
+    return response.data;
   } catch (e) {
     console.log(e);
   }
 }
 
 export const authService = {
-  EmailDuplicate,
-  SignUp,
-  Login,
+  emailDuplicate,
+  signUp,
+  login,
 };

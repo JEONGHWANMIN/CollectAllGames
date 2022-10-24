@@ -2,10 +2,14 @@ import styled from "@emotion/styled";
 import React from "react";
 import { colors } from "src/style/colors";
 
-function PostTag() {
+interface Props {
+  tag: string;
+}
+
+function PostTag({ tag }: Props) {
   return (
     <Container>
-      <p>#최신뉴스</p>
+      <p>#{tag}</p>
     </Container>
   );
 }

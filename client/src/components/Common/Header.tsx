@@ -16,22 +16,15 @@ interface UserState {
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const node = useRef(
-    null
-  ) as unknown as React.MutableRefObject<HTMLDivElement>;
+  const node = useRef(null) as unknown as React.MutableRefObject<HTMLDivElement>;
 
-  const [user, setValue] = useUserState() as [
-    UserState,
-    Dispatch<SetStateAction<UserState>>
-  ];
-  console.log(user);
+  const [user, setValue] = useUserState() as [UserState, Dispatch<SetStateAction<UserState>>];
+
+  const handleLogOut = () => {};
+
   useEffect(() => {
     const clickOutside = (e: MouseEvent) => {
-      if (
-        menuOpen &&
-        node.current &&
-        !node.current.contains(e.target as Node)
-      ) {
+      if (menuOpen && node.current && !node.current.contains(e.target as Node)) {
         setMenuOpen(false);
       }
     };
@@ -54,12 +47,22 @@ function Header() {
           <HiUserCircle />
           {menuOpen && (
             <MenuList>
-              <StyledLink to={"/login"}>
-                <li>로그인</li>
-              </StyledLink>
-              <StyledLink to={"/signup"}>
-                <li>회원가입</li>
-              </StyledLink>
+              {user ? (
+                <>
+                  <StyledLink to={"/login"}>
+                    <li>로그아웃</li>
+                  </StyledLink>
+                </>
+              ) : (
+                <>
+                  <StyledLink to={"/login"}>
+                    <li>로그인</li>
+                  </StyledLink>
+                  <StyledLink to={"/signup"}>
+                    <li>회원가입</li>
+                  </StyledLink>
+                </>
+              )}
             </MenuList>
           )}
         </Menu>

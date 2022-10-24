@@ -1,12 +1,36 @@
 import styled from "@emotion/styled";
 import React from "react";
 import { displayedAt } from "src/utils/convertToTIme";
-import { IoGameControllerOutline } from "react-icons/io5";
+import { IoGameControllerOutline, IoGameController } from "react-icons/io5";
 import PostTag from "../Common/PostTag";
+import { Post } from "src/types/post";
+import { colors } from "src/style/colors";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { postService } from "src/apis/postAPI";
 const userImgSrc =
   "https://morethanmin-remotto.herokuapp.com/images/default-user.jpg";
 
-function PostCard() {
+interface Props {
+  post: Post;
+}
+
+function PostCard({ post }: Props) {
+  const queryClient = useQueryClient();
+
+  const onSuccessOption = {
+    onSuccess: () => queryClient.invalidateQueries(["posts"]),
+  };
+
+  const { mutate: LikePost } = useMutation(
+    (postId: number) => postService.likePost(postId),
+    onSuccessOption
+  );
+
+  const { mutate: UnLikePost } = useMutation(
+    (postId: number) => postService.unLikePost(postId),
+    onSuccessOption
+  );
+
   return (
     <Container>
       <UserAndLikeInfo>
@@ -15,35 +39,39 @@ function PostCard() {
             <img src={userImgSrc} alt="userImg"></img>
           </UserImage>
           <User>
-            <h1>김떵깨</h1>
+            <h1>{post.username}</h1>
             <p>{displayedAt("2022-10-21T12:05:19.895Z")}</p>
           </User>
         </UserInfo>
         <LikeInfo>
           <LikeIcon>
-            <IoGameControllerOutline color={"gray"} />
+            {post.like ? (
+              <IoGameController
+                color={colors.mainColor}
+                onClick={() => UnLikePost(post.id)}
+              />
+            ) : (
+              <IoGameControllerOutline
+                color={"gray"}
+                onClick={() => LikePost(post.id)}
+              />
+            )}
           </LikeIcon>
-          <LikeCount>0</LikeCount>
+          <LikeCount>{post.likeCount}</LikeCount>
         </LikeInfo>
       </UserAndLikeInfo>
       <PostContent>
-        <Thumbnail
-          src="https://i.ytimg.com/vi/tvvaIGNqRyc/maxresdefault.jpg"
-          alt="thumbnail"
-        />
-        <PostTitle>카트라이더 러쉬 복귀 이벤트 진행중 😃</PostTitle>
-        <PostDescription>
-          카드라이더 러쉬가 복귀 이벤트를 진행한다고 합니다 !! 지금이 복귀하기{" "}
-          <br />
-          좋은 타이밍 인거 같습니다.
-        </PostDescription>
+        <Thumbnail src={post.imgUrl} alt="thumbnail" />
+        <PostTitle>{post.title}</PostTitle>
+        <PostDescription>{post.content}</PostDescription>
         <TagBox>
-          <PostTag />
-          <PostTag />
+          {post.tag.map((tag) => (
+            <PostTag tag={tag} />
+          ))}
         </TagBox>
         <ViewAndComment>
-          <Count>조회수 0</Count>
-          <Count>댓글 0</Count>
+          <Count>조회수 {post.view}</Count>
+          <Count>댓글 {post.commentCount}</Count>
         </ViewAndComment>
       </PostContent>
     </Container>
@@ -57,6 +85,7 @@ const Container = styled.div`
   padding: 15px 20px;
   background-color: white;
   border: solid 1px lightgray;
+  margin-bottom: 10px;
 `;
 
 const UserAndLikeInfo = styled.div`
@@ -101,6 +130,7 @@ const LikeInfo = styled.div`
 
 const LikeIcon = styled.div`
   font-size: 32px;
+  cursor: pointer;
 `;
 
 const LikeCount = styled.p`

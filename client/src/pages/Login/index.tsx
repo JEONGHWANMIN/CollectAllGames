@@ -2,13 +2,15 @@ import styled from "@emotion/styled";
 import jwtDecode from "jwt-decode";
 import React, { Dispatch, SetStateAction } from "react";
 import { useNavigate } from "react-router-dom";
-import { authService } from "src/apis/authAPI";
 import LabelInput from "src/components/Common/LabelInput";
 import Layout from "src/components/Layout/Layout";
 import SubmitButton from "src/components/Common/SubmitButton";
 import { useUserState } from "src/context/userContext";
 import useForm from "src/hooks/useForm";
 import { setCookie } from "src/utils/cookie";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { authService } from "src/apis/authAPI";
 
 const initialData = {
   email: "",
@@ -44,33 +46,39 @@ interface JwtPayload {
 function Login() {
   const navigate = useNavigate();
 
-  const [user, setUser] = useUserState() as [
-    UserState,
-    Dispatch<SetStateAction<UserState>>
-  ];
+  const [user, setUser] = useUserState() as [UserState, Dispatch<SetStateAction<UserState>>];
 
   console.log(user);
 
-  const handleLogin = async (formData: typeof initialData) => {
-    const result = await authService.Login(formData);
-    if (result?.status === 200) {
-      const { accessToken, refreshToken } = result.data;
-      setCookie("refreshToken", refreshToken);
-      const decode: JwtPayload = jwtDecode(accessToken);
-      setUser({
-        ...decode,
-        accessToken: accessToken,
-      });
-      alert("로그인 성공");
-      return navigate("/");
+  const { mutate, isLoading, isError, error, isSuccess } = useMutation(
+    ["posts"],
+    authService.login,
+    {
+      onSuccess: (data) => {
+        if (!data) return null;
+        const { accessToken, refreshToken } = data;
+        const { email, username, userId } = jwtDecode<JwtPayload>(accessToken);
+        setUser({
+          email,
+          username,
+          accessToken,
+          userId,
+        });
+        setCookie("accessToken", accessToken);
+        setCookie("refreshToken", refreshToken);
+        navigate("/");
+      },
     }
-    alert("로그인 실패");
+  );
+
+  const handleLogin = async (formData: typeof initialData) => {
+    mutate(formData);
   };
-  const { formData, handleChange, handleSubmit } = useForm<
-    FormType,
-    any,
-    ValidationType
-  >(initialData, handleLogin);
+
+  const { formData, handleChange, handleSubmit } = useForm<FormType, any, ValidationType>(
+    initialData,
+    handleLogin
+  );
 
   const { email, password } = formData;
 
@@ -79,18 +87,8 @@ function Login() {
       <Container>
         <Title>로그인</Title>
         <Form onSubmit={handleSubmit}>
-          <LabelInput
-            label="이메일"
-            name="email"
-            value={email}
-            onChange={handleChange}
-          />
-          <LabelInput
-            label="비밀번호"
-            name="password"
-            value={password}
-            onChange={handleChange}
-          />
+          <LabelInput label="이메일" name="email" value={email} onChange={handleChange} />
+          <LabelInput label="비밀번호" name="password" value={password} onChange={handleChange} />
           <SubmitButton name={"로그인"} />
         </Form>
       </Container>

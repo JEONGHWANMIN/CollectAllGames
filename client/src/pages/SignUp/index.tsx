@@ -19,10 +19,7 @@ interface FormType {
 interface ValidationService {
   emailValidate: (email: string) => boolean;
   passwordValidate: (password: string) => boolean;
-  passwordConfirmValidate: (
-    password: string,
-    passwordConfirm: string
-  ) => boolean;
+  passwordConfirmValidate: (password: string, passwordConfirm: string) => boolean;
   userNameValidate: (username: string) => boolean;
 }
 
@@ -46,7 +43,7 @@ function SignUp() {
   const [isDuplicate, setIsDuplicate] = useState<boolean>();
 
   const handleSignUp = async (formData: typeof initialData) => {
-    const result = await authService.SignUp(formData);
+    const result = await authService.signUp(formData);
     if (result?.status === 201) {
       alert("회원가입이 완료되었습니다.");
       return navigate("/login");
@@ -63,7 +60,7 @@ function SignUp() {
   const { email, username, password, passwordConfirm } = formData;
 
   useEffect(() => {
-    authService.EmailDuplicate(email).then((res) => {
+    authService.emailDuplicate(email).then((res) => {
       setIsDuplicate(res?.duplicate);
     });
   }, [email]);
@@ -95,9 +92,7 @@ function SignUp() {
             value={password}
             onChange={handleChange}
             error={errors.password}
-            errorMessages={
-              "비밀번호는 8자 이상 영문 숫자 특수문자를 포함해주세요."
-            }
+            errorMessages={"비밀번호는 8자 이상 영문 숫자 특수문자를 포함해주세요."}
           />
           <LabelInput
             label="비밀번호 확인"
