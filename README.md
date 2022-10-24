@@ -11,6 +11,7 @@
 - React
 - TypeScript
 - Emotion
+- React Query
 
 ### Backend
 
