@@ -1,9 +1,6 @@
 import axios from "axios";
+import { getCookie } from "src/utils/cookie";
 import { baseURL } from "..";
-
-const instance = axios.create({
-  baseURL: baseURL,
-});
 
 interface Duplicate {
   message: string;
@@ -25,6 +22,10 @@ interface LoginBody {
   accessToken: string;
   refreshToken: string;
 }
+
+const instance = axios.create({
+  baseURL: baseURL,
+});
 
 async function emailDuplicate(email: string) {
   try {
@@ -53,8 +54,25 @@ async function login(formData: LoginType) {
   }
 }
 
+async function logOut() {
+  try {
+    const response = await instance.post("/auth/logout", null, {
+      headers: {
+        logout: true,
+        Authorization: "Bearer " + getCookie("refreshToken"),
+      },
+    });
+    return response;
+  } catch (e) {
+    if (e instanceof Error) {
+      console.log(e.message);
+    }
+  }
+}
+
 export const authService = {
   emailDuplicate,
   signUp,
   login,
+  logOut,
 };

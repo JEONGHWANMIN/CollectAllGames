@@ -9,7 +9,6 @@ import { useUserState } from "src/context/userContext";
 import useForm from "src/hooks/useForm";
 import { setCookie } from "src/utils/cookie";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { authService } from "src/apis/authAPI";
 
 const initialData = {
@@ -66,6 +65,7 @@ function Login() {
         });
         setCookie("accessToken", accessToken);
         setCookie("refreshToken", refreshToken);
+
         navigate("/");
       },
     }

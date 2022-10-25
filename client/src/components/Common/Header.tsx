@@ -5,6 +5,9 @@ import { flextCenter } from "src/style/style";
 import { HiUserCircle } from "react-icons/hi";
 import { useState } from "react";
 import { useUserState } from "src/context/userContext";
+import { removeCookie } from "src/utils/cookie";
+import { authService } from "src/apis/authAPI";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface UserState {
   email: string;
@@ -15,12 +18,30 @@ interface UserState {
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
-
   const node = useRef(null) as unknown as React.MutableRefObject<HTMLDivElement>;
-
   const [user, setValue] = useUserState() as [UserState, Dispatch<SetStateAction<UserState>>];
 
-  const handleLogOut = () => {};
+  const queryClient = useQueryClient();
+
+  const onSuccessOption = {
+    onSuccess: () => {
+      removeCookie("accessToken");
+      removeCookie("refreshToken");
+      setValue({
+        email: "",
+        username: "",
+        accessToken: "",
+        userId: 0,
+      });
+      queryClient.invalidateQueries(["posts"]);
+    },
+  };
+
+  const { mutate } = useMutation(authService.logOut, onSuccessOption);
+
+  const handleLogOut = async () => {
+    mutate();
+  };
 
   useEffect(() => {
     const clickOutside = (e: MouseEvent) => {
@@ -32,7 +53,6 @@ function Header() {
     document.addEventListener("mousedown", clickOutside);
 
     return () => {
-      // Cleanup the event listener
       document.removeEventListener("mousedown", clickOutside);
     };
   }, [menuOpen]);
@@ -47,11 +67,14 @@ function Header() {
           <HiUserCircle />
           {menuOpen && (
             <MenuList>
-              {user ? (
+              {user.accessToken ? (
                 <>
-                  <StyledLink to={"/login"}>
-                    <li>로그아웃</li>
+                  <StyledLink to={"/write"}>
+                    <li>글쓰기</li>
                   </StyledLink>
+                  <div onClick={handleLogOut}>
+                    <li>로그아웃</li>
+                  </div>
                 </>
               ) : (
                 <>

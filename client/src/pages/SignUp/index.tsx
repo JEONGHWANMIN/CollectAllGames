@@ -8,6 +8,7 @@ import Layout from "src/components/Layout/Layout";
 import SubmitButton from "src/components/Common/SubmitButton";
 import useForm from "src/hooks/useForm";
 import { validateService } from "src/utils/validation";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface FormType {
   email: string;
@@ -38,17 +39,24 @@ const initialData = {
 };
 
 function SignUp() {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   const [isDuplicate, setIsDuplicate] = useState<boolean>();
 
-  const handleSignUp = async (formData: typeof initialData) => {
-    const result = await authService.signUp(formData);
-    if (result?.status === 201) {
-      alert("회원가입이 완료되었습니다.");
-      return navigate("/login");
+  const { mutate, isLoading, isError, error, isSuccess } = useMutation(
+    ["posts"],
+    authService.signUp,
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["posts"]);
+        navigate("/login");
+      },
     }
-    alert("회원가입에 실패했습니다.");
+  );
+
+  const handleSignUp = async (formData: typeof initialData) => {
+    mutate(formData);
   };
 
   const { formData, handleChange, handleSubmit, errors } = useForm<

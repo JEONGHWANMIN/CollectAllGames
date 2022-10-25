@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getCookie, setCookie } from "src/utils/cookie";
+import { getCookie, removeCookie, setCookie } from "src/utils/cookie";
 import { baseURL } from "..";
 
 const instance = axios.create({
@@ -9,12 +9,12 @@ const instance = axios.create({
 instance.interceptors.request.use(
   (config) => {
     if (!config.headers) config.headers = {};
-    if (config.headers["refresh-token"]) {
-      const refreshToken = getCookie("refreshToken");
-      config.headers.Authorization = "Bearer " + refreshToken;
-    } else {
-      const accessToken = getCookie("accessToken");
-      if (accessToken) {
+    if (getCookie("accessToken") && getCookie("refreshToken")) {
+      if (config.headers["refresh-token"]) {
+        const refreshToken = getCookie("refreshToken");
+        config.headers.Authorization = "Bearer " + refreshToken;
+      } else {
+        const accessToken = getCookie("accessToken");
         config.headers.Authorization = "Bearer " + accessToken;
       }
     }
@@ -33,28 +33,45 @@ instance.interceptors.response.use(
     const originalConfig = err.config;
 
     if (err.response) {
-      // Access Token was expired
-      if (err.response.status === 401 && !originalConfig._retry) {
+      if (err.response.status === 403) {
+        removeCookie("accessToken");
+        removeCookie("refreshToken");
+      } else if (err.response.status === 401 && !originalConfig._retry) {
         originalConfig._retry = true;
-        originalConfig.headers.Authorization = "Bearer " + getCookie("refreshToken");
 
-        try {
-          const response = await instance.post("/auth/refresh-tokens", null, {
-            headers: {
-              "refresh-token": true,
-            },
-          });
+        console.log("originalConfig", originalConfig);
 
-          const { accessToken, refreshToken } = response.data;
+        const refreshToken = getCookie("refreshToken");
+        instance.defaults.headers.common["Authorization"] = "Bearer " + refreshToken;
 
-          setCookie("accessToken", accessToken);
-          setCookie("refreshToken", refreshToken);
+        if (getCookie("refreshToken") && getCookie("accessToken")) {
+          try {
+            const response = await instance.post("/auth/refresh-tokens", null, {
+              headers: {
+                "refresh-token": true,
+              },
+            });
 
-          originalConfig.headers.Authorization = `Bearer ${accessToken}`;
+            const { accessToken, refreshToken } = response.data;
 
-          return instance(originalConfig);
-        } catch (_error) {
-          return Promise.reject(_error);
+            setCookie("accessToken", accessToken);
+            setCookie("refreshToken", refreshToken);
+
+            instance.defaults.headers.common["Authorization"] = "Bearer " + accessToken;
+
+            if (originalConfig.url.includes("like")) {
+              const postId = originalConfig.url.split("/")[2];
+              if (originalConfig.method === "post") {
+                return likePost(Number(postId));
+              } else {
+                return unLikePost(Number(postId));
+              }
+            }
+
+            return instance(originalConfig);
+          } catch (_error) {
+            return Promise.reject(_error);
+          }
         }
       }
     }

@@ -7,8 +7,8 @@ import { Post } from "src/types/post";
 import { colors } from "src/style/colors";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { postService } from "src/apis/postAPI";
-const userImgSrc =
-  "https://morethanmin-remotto.herokuapp.com/images/default-user.jpg";
+import { getCookie } from "src/utils/cookie";
+const userImgSrc = "https://morethanmin-remotto.herokuapp.com/images/default-user.jpg";
 
 interface Props {
   post: Post;
@@ -48,12 +48,22 @@ function PostCard({ post }: Props) {
             {post.like ? (
               <IoGameController
                 color={colors.mainColor}
-                onClick={() => UnLikePost(post.id)}
+                onClick={() => {
+                  if (!getCookie("accessToken")) {
+                    return alert("로그인이 필요한 서비스입니다.");
+                  }
+                  UnLikePost(post.id);
+                }}
               />
             ) : (
               <IoGameControllerOutline
                 color={"gray"}
-                onClick={() => LikePost(post.id)}
+                onClick={() => {
+                  if (!getCookie("accessToken")) {
+                    return alert("로그인이 필요한 서비스입니다.");
+                  }
+                  LikePost(post.id);
+                }}
               />
             )}
           </LikeIcon>
