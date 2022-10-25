@@ -45,7 +45,6 @@ export class PostsController {
     @Query('size', ParseIntPipe) size: number,
     @GetCurrentUser() user: JwtPayload,
   ) {
-    console.log('user', user);
     return this.postsService.findAll(page, size, user?.userId);
   }
 

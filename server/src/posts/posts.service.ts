@@ -186,8 +186,6 @@ export class PostsService {
   }
 
   async update(postId: number, userId: number, dto: UpdatePostDto) {
-    console.log(postId, userId, dto);
-
     const post = await this.findOne(postId);
 
     if (post.userId !== userId) {

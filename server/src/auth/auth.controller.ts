@@ -71,8 +71,8 @@ export class AuthController {
     description: '로그아웃 성공',
     schema: responseSchemas.logout,
   })
-  @UseGuards(RtGuard)
   @Public()
+  @UseGuards(RtGuard)
   @HttpCode(200)
   @Post('/logout')
   logout(@GetCurrentUser('userId') userId: number) {

@@ -17,7 +17,8 @@ export class AtGuard extends AuthGuard('jwt') {
     if (
       request.headers &&
       request.headers.authorization &&
-      !request.headers['refresh-token']
+      !request.headers['refresh-token'] &&
+      !request.headers.logout
     ) {
       return super.canActivate(context);
     }
