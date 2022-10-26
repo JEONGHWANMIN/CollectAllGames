@@ -18,14 +18,14 @@ function Detail() {
 
   const [comment, setComment] = useState("");
 
-  const { data: post, isLoading } = useQuery(["posts", id], () => {
+  const { data: post, isLoading } = useQuery(["posts", Number(id)], () => {
     return postService.fetchPost(Number(id));
   });
 
   const queryClient = useQueryClient();
 
   const onSuccessOption = {
-    onSuccess: () => queryClient.invalidateQueries(["posts", id]),
+    onSuccess: () => queryClient.invalidateQueries(["posts", Number(id)]),
   };
 
   const { mutate: LikePost } = useMutation(
@@ -43,7 +43,7 @@ function Detail() {
     {
       onSuccess: () => {
         setComment("");
-        queryClient.invalidateQueries(["posts", id]);
+        queryClient.invalidateQueries(["posts", Number(id)]);
       },
     }
   );
@@ -114,8 +114,8 @@ function Detail() {
           </VideoContent>
         </Content>
         <TagBox>
-          {post.tag.map((tag) => (
-            <PostTag tag={tag} />
+          {post.tag.map((tag, index) => (
+            <PostTag tag={tag} key={index} />
           ))}
         </TagBox>
         <ViewAndComment>
@@ -152,7 +152,7 @@ function Detail() {
       </CommnetInputContainer>
       <CommentList>
         {post.comment.map((comment) => (
-          <CommentCard comment={comment} />
+          <CommentCard comment={comment} key={comment.id} />
         ))}
       </CommentList>
     </Layout>
