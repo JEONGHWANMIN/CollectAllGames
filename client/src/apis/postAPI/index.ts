@@ -128,10 +128,20 @@ const createComment = async (postId: number, commentForm: CommentForm) => {
   }
 };
 
+const deleteComment = async (commentId: number) => {
+  try {
+    const response = await instance.delete(`/comment/${commentId}`);
+    return response.data;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 export const postService = {
   fetchPosts,
   fetchPost,
   likePost,
   unLikePost,
   createComment,
+  deleteComment,
 };

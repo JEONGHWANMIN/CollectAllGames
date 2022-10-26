@@ -1,5 +1,7 @@
 import styled from "@emotion/styled";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React, { Dispatch, SetStateAction, useState } from "react";
+import { postService } from "src/apis/postAPI";
 import { useUserState } from "src/context/userContext";
 import { UserState } from "src/types/user";
 import { displayedAt } from "src/utils/convertToTIme";
@@ -14,16 +16,42 @@ const userImgSrc = "https://morethanmin-remotto.herokuapp.com/images/default-use
 function CommentCard({ comment }: Props) {
   const [user] = useUserState() as [UserState, Dispatch<SetStateAction<UserState>>];
   const [content, setContent] = useState(comment.content);
+  const queryClient = useQueryClient();
+  const { mutate: deleteComment } = useMutation(
+    (commentId: number) => postService.deleteComment(commentId),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["posts", comment.postId]);
+      },
+    }
+  );
+
   return (
     <Container>
       <User>
-        <UserImage>
-          <img src={userImgSrc} alt="userImg" />
-        </UserImage>
         <UserInfo>
-          <UserName>{comment.username}</UserName>
-          <CreatedAt>{displayedAt(comment.createdAt)}</CreatedAt>
+          <UserImage>
+            <img src={userImgSrc} alt="userImg" />
+          </UserImage>
+          <Info>
+            <UserName>{comment.username}</UserName>
+            <CreatedAt>{displayedAt(comment.createdAt)}</CreatedAt>
+          </Info>
         </UserInfo>
+        <ContentEdit>
+          {user.userId === comment.userId && (
+            <>
+              <DeleteAndRevise>수정</DeleteAndRevise>
+              <DeleteAndRevise
+                onClick={() => {
+                  deleteComment(comment.id);
+                }}
+              >
+                삭제
+              </DeleteAndRevise>
+            </>
+          )}
+        </ContentEdit>
       </User>
       <Content>
         <CommentInput value={content} disabled={true}></CommentInput>
@@ -42,7 +70,7 @@ const Container = styled.div`
 
 const User = styled.div`
   display: flex;
-  gap: 10px;
+  justify-content: space-between;
 `;
 
 const UserImage = styled.div`
@@ -56,8 +84,10 @@ const UserImage = styled.div`
 
 const UserInfo = styled.div`
   display: flex;
-  flex-direction: column;
+  gap: 10px;
 `;
+
+const Info = styled.div``;
 
 const UserName = styled.h2`
   font-size: 16px;
@@ -67,6 +97,18 @@ const UserName = styled.h2`
 const CreatedAt = styled.p`
   font-size: 12px;
   color: gray;
+`;
+
+const ContentEdit = styled.div`
+  display: flex;
+  gap: 5px;
+  margin-right: 10px;
+`;
+
+const DeleteAndRevise = styled.p`
+  font-size: 12px;
+  color: gray;
+  cursor: pointer;
 `;
 
 const Content = styled.div`
