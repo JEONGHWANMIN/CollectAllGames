@@ -10,42 +10,18 @@ import useForm from "src/hooks/useForm";
 import { setCookie } from "src/utils/cookie";
 import { useMutation } from "@tanstack/react-query";
 import { authService } from "src/apis/authAPI";
+import { UserState } from "src/types/user";
+import { LoginFormType, LoginValidationType, JwtPayload } from "src/types/form";
 
 const initialData = {
   email: "",
   password: "",
 };
 
-interface UserState {
-  email: string;
-  username: string;
-  accessToken: string;
-  userId: number;
-}
-
-interface FormType {
-  email: string;
-  password: string;
-}
-
-interface ValidationType {
-  email: boolean;
-  username: boolean;
-  password: boolean;
-}
-
-interface JwtPayload {
-  email: string;
-  username: string;
-  userId: number;
-  iat: number;
-  exp: number;
-}
-
 function Login() {
   const navigate = useNavigate();
 
-  const [user, setUser] = useUserState() as [UserState, Dispatch<SetStateAction<UserState>>];
+  const [, setUser] = useUserState() as [UserState, Dispatch<SetStateAction<UserState>>];
 
   const { mutate, isLoading, isError, error, isSuccess } = useMutation(
     ["posts"],
@@ -73,7 +49,7 @@ function Login() {
     mutate(formData);
   };
 
-  const { formData, handleChange, handleSubmit } = useForm<FormType, any, ValidationType>(
+  const { formData, handleChange, handleSubmit } = useForm<LoginFormType, any, LoginValidationType>(
     initialData,
     handleLogin
   );

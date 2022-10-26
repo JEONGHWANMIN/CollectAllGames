@@ -9,27 +9,7 @@ import SubmitButton from "src/components/Common/SubmitButton";
 import useForm from "src/hooks/useForm";
 import { validateService } from "src/utils/validation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-
-interface FormType {
-  email: string;
-  username: string;
-  password: string;
-  passwordConfirm: string;
-}
-
-interface ValidationService {
-  emailValidate: (email: string) => boolean;
-  passwordValidate: (password: string) => boolean;
-  passwordConfirmValidate: (password: string, passwordConfirm: string) => boolean;
-  userNameValidate: (username: string) => boolean;
-}
-
-interface ValidationType {
-  email: boolean;
-  username: boolean;
-  password: boolean;
-  passwordConfirm: boolean;
-}
+import { SignUpFormType, SignUpValidationType, ValidationService } from "src/types/form";
 
 const initialData = {
   email: "",
@@ -60,9 +40,9 @@ function SignUp() {
   };
 
   const { formData, handleChange, handleSubmit, errors } = useForm<
-    FormType,
+    SignUpFormType,
     ValidationService,
-    ValidationType
+    SignUpValidationType
   >(initialData, handleSignUp, validateService);
 
   const { email, username, password, passwordConfirm } = formData;

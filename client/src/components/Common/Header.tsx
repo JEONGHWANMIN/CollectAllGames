@@ -8,13 +8,7 @@ import { useUserState } from "src/context/userContext";
 import { removeCookie } from "src/utils/cookie";
 import { authService } from "src/apis/authAPI";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-
-interface UserState {
-  email: string;
-  username: string;
-  accessToken: string;
-  userId: number;
-}
+import { UserState } from "src/types/user";
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
