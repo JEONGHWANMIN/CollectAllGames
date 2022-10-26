@@ -1,4 +1,11 @@
-import { Body, Controller, Param, ParseIntPipe, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Param,
+  ParseIntPipe,
+  Post,
+} from '@nestjs/common';
 import { JwtPayload } from 'src/auth/types';
 import { GetCurrentUser } from 'src/common/decorators';
 import { CommentService } from './comment.service';
@@ -11,9 +18,17 @@ export class CommentController {
   @Post(':postId')
   create(
     @Param('postId', ParseIntPipe) postId: number,
-    @GetCurrentUser() user: JwtPayload,
+    @GetCurrentUser('userId') userId: number,
     @Body() dto: CommentDto,
   ) {
-    return this.commentService.create(postId, user, dto);
+    return this.commentService.create(postId, userId, dto);
+  }
+
+  @Delete(':commentId')
+  delete(
+    @Param('commentId', ParseIntPipe) commentId: number,
+    @GetCurrentUser('userId') userId: number,
+  ) {
+    return this.commentService.delete(commentId, userId);
   }
 }

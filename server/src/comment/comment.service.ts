@@ -7,12 +7,13 @@ import { CommentDto } from './dto';
 export class CommentService {
   constructor(private prisma: PrismaService) {}
 
-  async create(postId: number, user: JwtPayload, dto: CommentDto) {
+  async create(postId: number, userId: number, dto: CommentDto) {
+    console.log(dto);
     await this.prisma.comment.create({
       data: {
         content: dto.content,
         postId,
-        userId: user.userId,
+        userId,
       },
     });
     return {
