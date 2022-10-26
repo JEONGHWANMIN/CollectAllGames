@@ -37,6 +37,9 @@ export class PostsService {
           },
         },
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
 
     if (!posts) {
@@ -60,6 +63,7 @@ export class PostsService {
       delete post._count;
       delete post.videoUrl;
       delete post.likes;
+      delete post.ogTitle;
     });
 
     const totalPage = Math.ceil(posts.length / size);
@@ -119,6 +123,12 @@ export class PostsService {
             userId: true,
           },
         },
+        _count: {
+          select: {
+            comment: true,
+            likes: true,
+          },
+        },
       },
     });
 
@@ -130,11 +140,23 @@ export class PostsService {
       username: post.user.username,
       tag: post.tags.map((tag) => tag.tag.title),
       like: post.likes.some((like) => like.userId === userId),
+      commentCount: post._count.comment,
+      likeCount: post._count.likes,
+      comment: post.comment.map((comment) => {
+        return {
+          ...comment,
+          username: comment.user.username,
+        };
+      }),
     };
 
     delete response.tags;
     delete response.user;
     delete response.likes;
+    delete response._count;
+    response.comment.forEach((commen) => {
+      delete commen.user;
+    });
 
     return response;
   }
@@ -157,22 +179,16 @@ export class PostsService {
 
     const options = { url: dto.link };
 
-    const { response }: any = await ogs(options);
-
-    const data = {
-      // ogTitle: response.ogTitle,
-      // ogDescription: response.ogDescription,
-      ogImageUrl: response.ogImage.url,
-      ogVideoUrl: response.ogVideo.url,
-    };
+    const { result }: any = await ogs(options);
 
     await this.prisma.post.create({
       data: {
         title: dto.title,
         link: dto.link,
         content: dto.content,
-        imgUrl: data.ogImageUrl,
-        videoUrl: data.ogVideoUrl,
+        imgUrl: result.ogImage.url,
+        videoUrl: result.ogVideo.url,
+        ogTitle: result.ogTitle,
         userId: user.userId,
         tags: {
           create: tagMap,

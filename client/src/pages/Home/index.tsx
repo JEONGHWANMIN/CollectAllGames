@@ -1,4 +1,5 @@
-/** @jsxImportSource @emotion/react */
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import styled from "@emotion/styled";
 import React, { useEffect } from "react";
 import PostCard from "src/components/Home/PostCard";
@@ -29,7 +30,6 @@ function Home() {
     }
   }, [inView]);
 
-  console.log(data);
   return (
     <Layout>
       <HomeContainer>

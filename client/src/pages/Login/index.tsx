@@ -47,8 +47,6 @@ function Login() {
 
   const [user, setUser] = useUserState() as [UserState, Dispatch<SetStateAction<UserState>>];
 
-  console.log(user);
-
   const { mutate, isLoading, isError, error, isSuccess } = useMutation(
     ["posts"],
     authService.login,

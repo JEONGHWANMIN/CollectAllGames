@@ -1,4 +1,4 @@
-export function displayedAt(createdAt: string) {
+export function displayedAt(createdAt: Date) {
   const today = new Date();
   const postDate = new Date(createdAt);
 

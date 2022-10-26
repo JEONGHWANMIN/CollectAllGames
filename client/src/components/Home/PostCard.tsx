@@ -8,6 +8,8 @@ import { colors } from "src/style/colors";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { postService } from "src/apis/postAPI";
 import { getCookie } from "src/utils/cookie";
+import { useNavigate } from "react-router-dom";
+
 const userImgSrc = "https://morethanmin-remotto.herokuapp.com/images/default-user.jpg";
 
 interface Props {
@@ -15,6 +17,7 @@ interface Props {
 }
 
 function PostCard({ post }: Props) {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const onSuccessOption = {
@@ -40,7 +43,7 @@ function PostCard({ post }: Props) {
           </UserImage>
           <User>
             <h1>{post.username}</h1>
-            <p>{displayedAt("2022-10-21T12:05:19.895Z")}</p>
+            <p>{displayedAt(post.createdAt)}</p>
           </User>
         </UserInfo>
         <LikeInfo>
@@ -70,20 +73,20 @@ function PostCard({ post }: Props) {
           <LikeCount>{post.likeCount}</LikeCount>
         </LikeInfo>
       </UserAndLikeInfo>
-      <PostContent>
+      <PostContent onClick={() => navigate(`/detail/${post.id}`)}>
         <Thumbnail src={post.imgUrl} alt="thumbnail" />
         <PostTitle>{post.title}</PostTitle>
         <PostDescription>{post.content}</PostDescription>
-        <TagBox>
-          {post.tag.map((tag) => (
-            <PostTag tag={tag} />
-          ))}
-        </TagBox>
-        <ViewAndComment>
-          <Count>조회수 {post.view}</Count>
-          <Count>댓글 {post.commentCount}</Count>
-        </ViewAndComment>
       </PostContent>
+      <TagBox>
+        {post.tag.map((tag) => (
+          <PostTag tag={tag} />
+        ))}
+      </TagBox>
+      <ViewAndComment>
+        <Count>조회수 {post.view}</Count>
+        <Count>댓글 {post.commentCount}</Count>
+      </ViewAndComment>
     </Container>
   );
 }
@@ -154,6 +157,7 @@ const PostContent = styled.div`
   flex-direction: column;
   gap: 10px;
   margin-top: 10px;
+  cursor: pointer;
 `;
 
 const Thumbnail = styled.img`
@@ -173,6 +177,8 @@ const PostDescription = styled.p`
 `;
 
 const TagBox = styled.div`
+  margin-top: 10px;
+  margin-left: -5px;
   display: flex;
   gap: 5px;
 `;
@@ -180,6 +186,7 @@ const TagBox = styled.div`
 const ViewAndComment = styled.div`
   display: flex;
   gap: 10px;
+  margin-top: 10px;
 `;
 const Count = styled.p`
   color: gray;

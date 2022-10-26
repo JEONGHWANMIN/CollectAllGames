@@ -1,6 +1,6 @@
-/** @jsxImportSource @emotion/react */
 import React from "react";
-import { createBrowserRouter, redirect } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
+import Detail from "./Detail";
 import Home from "./Home";
 import Login from "./Login";
 import SignUp from "./SignUp";
@@ -17,6 +17,10 @@ export const router = createBrowserRouter([
     //   return user;
     // },
     element: <Home />,
+  },
+  {
+    path: "detail/:id",
+    element: <Detail />,
   },
   {
     path: "/login",

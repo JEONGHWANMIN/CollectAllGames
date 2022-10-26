@@ -1,6 +1,11 @@
 import axios from "axios";
+import { Post } from "src/types/post";
 import { getCookie, removeCookie, setCookie } from "src/utils/cookie";
 import { baseURL } from "..";
+
+interface CommentForm {
+  content: string;
+}
 
 const instance = axios.create({
   baseURL: baseURL,
@@ -38,8 +43,6 @@ instance.interceptors.response.use(
         removeCookie("refreshToken");
       } else if (err.response.status === 401 && !originalConfig._retry) {
         originalConfig._retry = true;
-
-        console.log("originalConfig", originalConfig);
 
         const refreshToken = getCookie("refreshToken");
         instance.defaults.headers.common["Authorization"] = "Bearer " + refreshToken;
@@ -89,6 +92,15 @@ const fetchPosts = async (page: number) => {
   }
 };
 
+const fetchPost = async (postId: number) => {
+  try {
+    const response = await instance.get<Post>(`/posts/${postId}`);
+    return response.data;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 const likePost = async (postId: number) => {
   try {
     const response = await instance.post(`/posts/${postId}/like`);
@@ -107,8 +119,19 @@ const unLikePost = async (postId: number) => {
   }
 };
 
+const createComment = async (postId: number, commentForm: CommentForm) => {
+  try {
+    const response = await instance.post(`/comment/${postId}`, commentForm);
+    return response.data;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 export const postService = {
   fetchPosts,
+  fetchPost,
   likePost,
   unLikePost,
+  createComment,
 };

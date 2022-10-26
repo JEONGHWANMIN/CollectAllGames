@@ -18,6 +18,7 @@ export default Layout;
 
 const Container = styled.div`
   background-color: #f4f4f4;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
