@@ -98,6 +98,7 @@ export class PostsService {
         user: {
           select: {
             username: true,
+            id: true,
           },
         },
         comment: {
@@ -141,6 +142,7 @@ export class PostsService {
     const response = {
       ...post,
       username: post.user.username,
+      userId: post.user.id,
       tag: post.tags.map((tag) => tag.tag.title),
       like: post.likes.some((like) => like.userId === userId),
       commentCount: post._count.comment,
