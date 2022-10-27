@@ -79,8 +79,8 @@ function PostCard({ post }: Props) {
         <PostDescription>{post.content}</PostDescription>
       </PostContent>
       <TagBox>
-        {post.tag.map((tag) => (
-          <PostTag tag={tag} />
+        {post.tag.map((tag, index) => (
+          <PostTag tag={tag} key={index} />
         ))}
       </TagBox>
       <ViewAndComment>
