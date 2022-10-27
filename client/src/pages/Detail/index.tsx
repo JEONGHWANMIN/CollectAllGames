@@ -135,6 +135,7 @@ function Detail() {
             onChange={(e) => setComment(e.target.value)}
           />
           <CommentSubmit
+            disabled={getCookie("accessToken") ? false : true}
             onClick={async (e) => {
               e.preventDefault();
               if (!getCookie("accessToken")) {
@@ -311,4 +312,8 @@ const CommentList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
+
+  :last-child {
+    margin-bottom: 20px;
+  }
 `;
