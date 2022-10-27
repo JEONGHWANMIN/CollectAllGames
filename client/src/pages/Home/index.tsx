@@ -8,6 +8,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
 import { Post } from "src/types/post";
 import { postService } from "src/apis/postAPI";
+import { removeCookie } from "src/utils/cookie";
 
 function Home() {
   const { ref, inView } = useInView();
@@ -23,6 +24,16 @@ function Home() {
       },
     }
   );
+
+  useEffect(() => {
+    window.onbeforeunload = function (e) {
+      window.onunload = function () {
+        removeCookie("accessToken");
+        removeCookie("refreshToken");
+      };
+      return undefined;
+    };
+  }, []);
 
   useEffect(() => {
     if (inView && hasNextPage) {
