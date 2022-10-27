@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import jwtDecode from "jwt-decode";
 import React, { Dispatch, SetStateAction } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useNavigation } from "react-router-dom";
 import LabelInput from "src/components/Common/LabelInput";
 import Layout from "src/components/Layout/Layout";
 import SubmitButton from "src/components/Common/SubmitButton";
@@ -20,7 +20,7 @@ const initialData = {
 
 function Login() {
   const navigate = useNavigate();
-
+  const location = useLocation();
   const [, setUser] = useUserState() as [UserState, Dispatch<SetStateAction<UserState>>];
 
   const { mutate, isLoading, isError, error, isSuccess } = useMutation(
@@ -40,7 +40,11 @@ function Login() {
         setCookie("accessToken", accessToken);
         setCookie("refreshToken", refreshToken);
 
-        navigate("/");
+        if (location.state !== null && location.state.page === "signup") {
+          return navigate("/");
+        }
+
+        navigate(-1);
       },
     }
   );

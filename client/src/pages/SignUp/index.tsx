@@ -30,7 +30,7 @@ function SignUp() {
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["posts"]);
-        navigate("/login");
+        navigate("/login", { state: { page: "signup" } });
       },
     }
   );
