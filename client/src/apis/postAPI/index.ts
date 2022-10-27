@@ -137,6 +137,15 @@ const deleteComment = async (commentId: number) => {
   }
 };
 
+const updateComment = async (commentId: number, commentForm: CommentForm) => {
+  try {
+    const response = await instance.put(`/comment/${commentId}`, commentForm);
+    return response.data;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 export const postService = {
   fetchPosts,
   fetchPost,
@@ -144,4 +153,5 @@ export const postService = {
   unLikePost,
   createComment,
   deleteComment,
+  updateComment,
 };
