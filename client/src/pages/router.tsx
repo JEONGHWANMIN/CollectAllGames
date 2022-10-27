@@ -1,5 +1,6 @@
 import React from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, redirect } from "react-router-dom";
+import { getCookie } from "src/utils/cookie";
 import Detail from "./Detail";
 import Home from "./Home";
 import Login from "./Login";
@@ -9,13 +10,6 @@ import Write from "./Write";
 export const router = createBrowserRouter([
   {
     path: "/",
-    // loader: () => {
-    //   const user = "HwanMin";
-    //   if (false) {
-    //     throw redirect("/login");
-    //   }
-    //   return user;
-    // },
     element: <Home />,
   },
   {
@@ -33,5 +27,10 @@ export const router = createBrowserRouter([
   {
     path: "/write",
     element: <Write />,
+    loader: () => {
+      if (!getCookie("accessToken") || !getCookie("refreshToken")) {
+        return redirect("/login");
+      }
+    },
   },
 ]);
