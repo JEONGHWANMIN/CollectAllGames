@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import { flextCenter } from "src/style/style";
 import { HiUserCircle } from "react-icons/hi";
@@ -7,15 +7,14 @@ import { useState } from "react";
 import { useUserState } from "src/context/userContext";
 import { removeCookie } from "src/utils/cookie";
 import { authService } from "src/apis/authAPI";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { UserState } from "src/types/user";
 
 function Header() {
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const node = useRef(null) as unknown as React.MutableRefObject<HTMLDivElement>;
   const [user, setValue] = useUserState() as [UserState, Dispatch<SetStateAction<UserState>>];
-
-  const queryClient = useQueryClient();
 
   const onSuccessOption = {
     onSuccess: () => {
@@ -27,7 +26,7 @@ function Header() {
         accessToken: "",
         userId: 0,
       });
-      queryClient.invalidateQueries(["posts"]);
+      navigate("/");
     },
   };
 
