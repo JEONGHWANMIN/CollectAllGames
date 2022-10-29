@@ -233,6 +233,7 @@ const PostTitle = styled.h1`
 const PostContent = styled.p`
   font-size: 15px;
   margin-bottom: 10px;
+  white-space: pre-line;
 `;
 
 const VideoContent = styled.div`

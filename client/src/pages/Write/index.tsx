@@ -1,5 +1,8 @@
 import styled from "@emotion/styled";
+import { useMutation } from "@tanstack/react-query";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { postService } from "src/apis/postAPI";
 import LabelInput from "src/components/Common/LabelInput";
 import SubmitButton from "src/components/Common/SubmitButton";
 import Layout from "src/components/Layout/Layout";
@@ -8,6 +11,8 @@ import { colors } from "src/style/colors";
 import { WriteFormType } from "src/types/form";
 
 function Write() {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState<WriteFormType>({
     title: "",
     content: "",
@@ -25,7 +30,14 @@ function Write() {
 
   const { title, content, link, tags } = form;
 
-  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const { mutate: createPost } = useMutation(postService.createPost, {
+    onSuccess: () => {
+      alert("게시물이 등록되었습니다.");
+      navigate("/");
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const { title, content, link, tags } = form;
     if (
@@ -40,14 +52,14 @@ function Write() {
       alert("모든 항목을 입력해주세요.");
       return;
     }
-    console.log(form);
+    createPost(form);
   };
 
   return (
     <Layout>
       <Container>
         <Title>공유하기</Title>
-        <Form>
+        <Form onSubmit={handleSubmit}>
           <TagsBox setForm={setForm} tags={tags} />
           <LabelInput label={"제목"} onChange={handleChange} value={title} name={"title"} />
           <TextAreaBox>
@@ -66,7 +78,7 @@ function Write() {
           <ExplainBox>
             <Explain>* 유튜브 공유하기 링크를 넣어주세요 !</Explain>
           </ExplainBox>
-          <SubmitButton name="완료" type={"button"} onClick={handleSubmit} />
+          <SubmitButton name="완료" />
         </Form>
       </Container>
     </Layout>
