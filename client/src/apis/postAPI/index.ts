@@ -1,11 +1,8 @@
 import axios from "axios";
+import { CommentForm, CreatePostFormType } from "src/types/form";
 import { Post } from "src/types/post";
 import { getCookie, removeCookie, setCookie } from "src/utils/cookie";
 import { baseURL } from "..";
-
-interface CommentForm {
-  content: string;
-}
 
 const instance = axios.create({
   baseURL: baseURL,
@@ -101,6 +98,15 @@ const fetchPost = async (postId: number) => {
   }
 };
 
+const createPost = async (postForm: CreatePostFormType) => {
+  try {
+    const response = await instance.post("/posts", postForm);
+    return response.data;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 const likePost = async (postId: number) => {
   try {
     const response = await instance.post(`/posts/${postId}/like`);
@@ -149,6 +155,7 @@ const updateComment = async (commentId: number, commentForm: CommentForm) => {
 export const postService = {
   fetchPosts,
   fetchPost,
+  createPost,
   likePost,
   unLikePost,
   createComment,
