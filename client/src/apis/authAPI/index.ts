@@ -46,12 +46,8 @@ async function signUp(formData: SignUpType) {
 }
 
 async function login(formData: LoginType) {
-  try {
-    const response = await instance.post<LoginBody>("/auth/login", formData);
-    return response.data;
-  } catch (e) {
-    console.log(e);
-  }
+  const response = await instance.post<LoginBody>("/auth/login", formData);
+  return response.data;
 }
 
 async function logOut() {
