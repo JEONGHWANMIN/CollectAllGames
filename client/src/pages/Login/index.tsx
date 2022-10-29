@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import jwtDecode from "jwt-decode";
 import React, { Dispatch, SetStateAction } from "react";
-import { useLocation, useNavigate, useNavigation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import LabelInput from "src/components/Common/LabelInput";
 import Layout from "src/components/Layout/Layout";
 import SubmitButton from "src/components/Common/SubmitButton";

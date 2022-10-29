@@ -17,10 +17,7 @@ interface FormType {
 interface validateType {
   emailValidate: (email: string) => boolean;
   passwordValidate: (password: string) => boolean;
-  passwordConfirmValidate: (
-    password: string,
-    passwordConfirm: string
-  ) => boolean;
+  passwordConfirmValidate: (password: string, passwordConfirm: string) => boolean;
   userNameValidate: (username: string) => boolean;
 }
 
@@ -56,10 +53,7 @@ function useForm<T extends FormType, V extends validateType, K>(
     if (e.target.name === "passwordConfirm") {
       setErrors({
         ...errors,
-        passwordConfirm: validation?.passwordConfirmValidate(
-          formData.password,
-          e.target.value
-        ),
+        passwordConfirm: validation?.passwordConfirmValidate(formData.password, e.target.value),
       });
     }
 

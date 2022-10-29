@@ -37,3 +37,9 @@ export interface SignUpValidationType {
   password: boolean;
   passwordConfirm: boolean;
 }
+
+export interface PostFormType {
+  title: string;
+  content: string;
+  link: string;
+}
