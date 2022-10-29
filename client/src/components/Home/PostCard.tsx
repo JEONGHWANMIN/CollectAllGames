@@ -174,6 +174,7 @@ const PostTitle = styled.h1`
 
 const PostDescription = styled.p`
   font-size: 14px;
+  white-space: pre-line;
 `;
 
 const TagBox = styled.div`
