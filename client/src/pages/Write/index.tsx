@@ -1,12 +1,14 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useState } from "react";
 import LabelInput from "src/components/Common/LabelInput";
 import SubmitButton from "src/components/Common/SubmitButton";
 import Layout from "src/components/Layout/Layout";
+import TagsBox from "src/components/Write/TagsBox";
 import { colors } from "src/style/colors";
+import { WriteFormType } from "src/types/form";
 
 function Write() {
-  const [form, setForm] = React.useState({
+  const [form, setForm] = useState<WriteFormType>({
     title: "",
     content: "",
     link: "",
@@ -23,15 +25,30 @@ function Write() {
 
   const { title, content, link, tags } = form;
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    const { title, content, link, tags } = form;
+    if (
+      !title ||
+      !content ||
+      !link ||
+      !tags.length ||
+      title.trim() === "" ||
+      content.trim() === "" ||
+      link.trim() === ""
+    ) {
+      alert("모든 항목을 입력해주세요.");
+      return;
+    }
     console.log(form);
   };
+
   return (
     <Layout>
       <Container>
         <Title>공유하기</Title>
-        <Form onSubmit={handleSubmit}>
+        <Form>
+          <TagsBox setForm={setForm} tags={tags} />
           <LabelInput label={"제목"} onChange={handleChange} value={title} name={"title"} />
           <TextAreaBox>
             <Label>내용</Label>
@@ -46,8 +63,10 @@ function Write() {
             ></TextArea>
           </TextAreaBox>
           <LabelInput label={"링크"} onChange={handleChange} value={link} name={"link"} />
-          <SubmitButton name="완료" />
-          ㅇㅇd
+          <ExplainBox>
+            <Explain>* 유튜브 공유하기 링크를 넣어주세요 !</Explain>
+          </ExplainBox>
+          <SubmitButton name="완료" type={"button"} onClick={handleSubmit} />
         </Form>
       </Container>
     </Layout>
@@ -73,10 +92,20 @@ const Title = styled.div`
 `;
 
 const Form = styled.form`
+  margin-top: 30px;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+`;
+
+const ExplainBox = styled.div`
+  width: 60%;
+`;
+
+const Explain = styled.p`
+  font-size: 12px;
+  color: gray;
 `;
 
 const TextAreaBox = styled.div`
