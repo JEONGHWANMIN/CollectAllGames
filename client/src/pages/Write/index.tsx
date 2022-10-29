@@ -47,7 +47,7 @@ function Write() {
           </TextAreaBox>
           <LabelInput label={"링크"} onChange={handleChange} value={link} name={"link"} />
           <SubmitButton name="완료" />
-          ㅇㅇ
+          ㅇㅇd
         </Form>
       </Container>
     </Layout>
