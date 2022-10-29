@@ -19,6 +19,7 @@ export default Layout;
 const Container = styled.div`
   background-color: #f4f4f4;
   min-height: 100vh;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -28,5 +29,9 @@ const Body = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 650px;
+  width: 600px;
+
+  @media (max-width: 600px) {
+    width: 100%;
+  }
 `;
