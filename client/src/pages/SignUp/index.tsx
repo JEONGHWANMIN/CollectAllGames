@@ -24,16 +24,12 @@ function SignUp() {
 
   const [isDuplicate, setIsDuplicate] = useState<boolean>();
 
-  const { mutate, isLoading, isError, error, isSuccess } = useMutation(
-    ["posts"],
-    authService.signUp,
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["posts"]);
-        navigate("/login", { state: { page: "signup" } });
-      },
-    }
-  );
+  const { mutate } = useMutation(["posts"], authService.signUp, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["posts"]);
+      navigate("/login", { state: { page: "signup" } });
+    },
+  });
 
   const handleSignUp = async (formData: typeof initialData) => {
     mutate(formData);
@@ -59,6 +55,7 @@ function SignUp() {
         <Title>회원가입</Title>
         <Form onSubmit={handleSubmit}>
           <LabelInput
+            type={"email"}
             label="이메일"
             name="email"
             value={email}
@@ -75,6 +72,7 @@ function SignUp() {
             errorMessages={"이름에 공백을 제거해주세요."}
           />
           <LabelInput
+            type={"password"}
             label="비밀번호"
             name="password"
             value={password}
@@ -83,6 +81,7 @@ function SignUp() {
             errorMessages={"비밀번호는 8자 이상 영문 숫자 특수문자를 포함해주세요."}
           />
           <LabelInput
+            type={"password"}
             label="비밀번호 확인"
             name="passwordConfirm"
             value={passwordConfirm}
