@@ -1,8 +1,10 @@
 import styled from "@emotion/styled";
 import { useMutation } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { postService } from "src/apis/postAPI";
+import FullLoading from "src/components/Common/FullLoading";
 import LabelInput from "src/components/Common/LabelInput";
 import SubmitButton from "src/components/Common/SubmitButton";
 import Layout from "src/components/Layout/Layout";
@@ -30,10 +32,15 @@ function Write() {
 
   const { title, content, link, tags } = form;
 
-  const { mutate: createPost } = useMutation(postService.createPost, {
+  const { mutate: createPost, isLoading } = useMutation(postService.createPost, {
     onSuccess: () => {
       alert("게시물이 등록되었습니다.");
       navigate("/");
+    },
+    onError: (error: AxiosError) => {
+      if (error.response?.status === 404) {
+        alert(error);
+      }
     },
   });
 
@@ -74,13 +81,20 @@ function Write() {
               }
             ></TextArea>
           </TextAreaBox>
-          <LabelInput label={"링크"} onChange={handleChange} value={link} name={"link"} />
+          <LabelInput
+            label={"링크"}
+            onChange={handleChange}
+            value={link}
+            name={"link"}
+            placeholder={"https://youtu.be/4Yqqh8JjTsI"}
+          />
           <ExplainBox>
             <Explain>* 유튜브 공유하기 링크를 넣어주세요 !</Explain>
           </ExplainBox>
           <SubmitButton name="완료" />
         </Form>
       </Container>
+      {isLoading && <FullLoading />}
     </Layout>
   );
 }
