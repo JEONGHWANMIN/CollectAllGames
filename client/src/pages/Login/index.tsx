@@ -40,7 +40,7 @@ function Login() {
       setCookie("accessToken", accessToken);
       setCookie("refreshToken", refreshToken);
 
-      if (location.state !== null && location.state.page === "signup") {
+      if (location.state !== null && location.state.page === "/signup") {
         return navigate("/");
       }
 
@@ -87,6 +87,7 @@ function Login() {
           <SubmitButton name={"로그인"} />
           {error && <Error>이메일 비밀번호가 유효하지 않습니다.</Error>}
         </Form>
+        <NewUser onClick={() => navigate("/signup")}>회원가입 바로가기</NewUser>
       </Container>
     </Layout>
   );
@@ -123,4 +124,11 @@ const Error = styled.div`
   color: red;
   font-size: 12px;
   height: 15px;
+`;
+
+const NewUser = styled.p`
+  margin-top: 20px;
+  color: gray;
+  text-decoration: underline;
+  cursor: pointer;
 `;

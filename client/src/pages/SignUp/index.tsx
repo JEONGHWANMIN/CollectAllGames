@@ -27,7 +27,7 @@ function SignUp() {
   const { mutate } = useMutation(["posts"], authService.signUp, {
     onSuccess: () => {
       queryClient.invalidateQueries(["posts"]);
-      navigate("/login", { state: { page: "signup" } });
+      navigate("/login", { state: { page: "/signup" } });
     },
   });
 
@@ -91,6 +91,7 @@ function SignUp() {
           />
           <SubmitButton name={"회원가입"} />
         </Form>
+        <ExistUser onClick={() => navigate("/login")}>로그인 바로가기</ExistUser>
       </Container>
     </Layout>
   );
@@ -104,9 +105,9 @@ const Container = styled.div`
   align-items: center;
   margin-top: 150px;
   width: 100%;
-  height: 600px;
   background-color: white;
   border-radius: 10px;
+  padding-bottom: 20px;
 `;
 
 const Title = styled.div`
@@ -121,4 +122,11 @@ const Form = styled.form`
   width: 100%;
   flex-direction: column;
   align-items: center;
+`;
+
+const ExistUser = styled.p`
+  margin-top: 20px;
+  color: gray;
+  text-decoration: underline;
+  cursor: pointer;
 `;
