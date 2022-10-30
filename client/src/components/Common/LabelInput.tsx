@@ -19,6 +19,7 @@ function LabelInput({
   error,
   errorMessages,
   value,
+  placeholder,
 }: Props) {
   const [focus, setFocus] = useState(false);
   const handleBlur = () => {
@@ -36,12 +37,9 @@ function LabelInput({
         onBlur={handleBlur}
         onFocus={handleFocus}
         onChange={onChange}
+        placeholder={placeholder}
       />
-      {error && value.length >= 1 ? (
-        <Error>{errorMessages}</Error>
-      ) : (
-        <Error></Error>
-      )}
+      {error && value.length >= 1 ? <Error>{errorMessages}</Error> : <Error></Error>}
     </Container>
   );
 }
