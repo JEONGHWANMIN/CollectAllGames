@@ -99,12 +99,8 @@ const fetchPost = async (postId: number) => {
 };
 
 const createPost = async (postForm: CreatePostFormType) => {
-  try {
-    const response = await instance.post("/posts", postForm);
-    return response.data;
-  } catch (e) {
-    console.log(e);
-  }
+  const response = await instance.post("/posts", postForm);
+  return response.data;
 };
 
 const likePost = async (postId: number) => {
