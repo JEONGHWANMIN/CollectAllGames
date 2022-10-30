@@ -48,8 +48,6 @@ function Detail() {
     }
   );
 
-  console.log(post);
-
   if (isLoading) return <div>로딩중</div>;
 
   if (!post) return <div>존재하지 않는 게시물입니다.</div>;
