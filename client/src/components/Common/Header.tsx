@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import { flextCenter } from "src/style/style";
 import { HiUserCircle } from "react-icons/hi";
@@ -12,9 +12,13 @@ import { UserState } from "src/types/user";
 
 function Header() {
   const navigate = useNavigate();
+
   const [menuOpen, setMenuOpen] = useState(false);
-  const node = useRef(null) as unknown as React.MutableRefObject<HTMLDivElement>;
   const [user, setValue] = useUserState() as [UserState, Dispatch<SetStateAction<UserState>>];
+
+  const location = useLocation();
+
+  const node = useRef(null) as unknown as React.MutableRefObject<HTMLDivElement>;
 
   const onSuccessOption = {
     onSuccess: () => {
@@ -31,10 +35,6 @@ function Header() {
   };
 
   const { mutate } = useMutation(authService.logOut, onSuccessOption);
-
-  const handleLogOut = async () => {
-    mutate();
-  };
 
   useEffect(() => {
     const clickOutside = (e: MouseEvent) => {
@@ -65,16 +65,20 @@ function Header() {
                   <StyledLink to={"/write"}>
                     <li>글쓰기</li>
                   </StyledLink>
-                  <div onClick={handleLogOut}>
+                  <div onClick={async () => mutate()}>
                     <li>로그아웃</li>
                   </div>
                 </>
               ) : (
                 <>
-                  <StyledLink to={"/login"}>
+                  <div
+                    onClick={() => {
+                      navigate("/login", { state: { page: location.pathname } });
+                    }}
+                  >
                     <li>로그인</li>
-                  </StyledLink>
-                  <StyledLink to={"/signup"}>
+                  </div>
+                  <StyledLink to={"/signup"} state="HI">
                     <li>회원가입</li>
                   </StyledLink>
                 </>
@@ -86,6 +90,7 @@ function Header() {
     </Container>
   );
 }
+// location.pathname === "/signup" ? { page: "/signup" } : null
 
 export default Header;
 
