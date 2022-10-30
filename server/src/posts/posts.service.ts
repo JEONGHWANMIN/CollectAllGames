@@ -184,16 +184,22 @@ export class PostsService {
 
     const options = { url: dto.link };
 
-    const { result }: any = await ogs(options);
+    let result1;
+    try {
+      const { result }: any = await ogs(options);
+      result1 = result;
+    } catch (e) {
+      throw new NotFoundException('Link not found');
+    }
 
     await this.prisma.post.create({
       data: {
         title: dto.title,
         link: dto.link,
         content: dto.content,
-        imgUrl: result.ogImage.url,
-        videoUrl: result.ogVideo.url,
-        ogTitle: result.ogTitle,
+        imgUrl: result1.ogImage.url,
+        videoUrl: result1.ogVideo.url,
+        ogTitle: result1.ogTitle,
         userId: user.userId,
         tags: {
           create: tagMap,
