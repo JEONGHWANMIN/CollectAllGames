@@ -7,11 +7,13 @@ import { useState } from "react";
 import { useUserState } from "src/context/userContext";
 import { removeCookie } from "src/utils/cookie";
 import { authService } from "src/apis/authAPI";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { UserState } from "src/types/user";
 
 function Header() {
   const navigate = useNavigate();
+
+  const queryClient = useQueryClient();
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setValue] = useUserState() as [UserState, Dispatch<SetStateAction<UserState>>];
@@ -31,6 +33,7 @@ function Header() {
         userId: 0,
       });
       navigate("/");
+      queryClient.invalidateQueries(["posts"]);
     },
   };
 
