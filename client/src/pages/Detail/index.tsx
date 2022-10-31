@@ -1,13 +1,15 @@
 import styled from "@emotion/styled";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { IoGameController, IoGameControllerOutline } from "react-icons/io5";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { postService } from "src/apis/postAPI";
 import PostTag from "src/components/Common/PostTag";
 import CommentCard from "src/components/Detail/CommentCard";
 import Layout from "src/components/Layout/Layout";
+import { useUserState } from "src/context/userContext";
 import { colors } from "src/style/colors";
+import { UserState } from "src/types/user";
 import { displayedAt } from "src/utils/convertToTIme";
 import { getCookie } from "src/utils/cookie";
 
@@ -15,7 +17,8 @@ const userImgSrc = "https://morethanmin-remotto.herokuapp.com/images/default-use
 
 function Detail() {
   const { id } = useParams();
-
+  const navigate = useNavigate();
+  const [user] = useUserState() as [UserState, Dispatch<SetStateAction<UserState>>];
   const [comment, setComment] = useState("");
 
   const { data: post, isLoading } = useQuery(["posts", Number(id)], () => {
@@ -47,6 +50,12 @@ function Detail() {
       },
     }
   );
+
+  const { mutate: deletePost } = useMutation((postId: number) => postService.deletePost(postId), {
+    onSuccess: () => {
+      navigate("/");
+    },
+  });
 
   if (isLoading) return <div>로딩중</div>;
 
@@ -92,6 +101,20 @@ function Detail() {
             <LikeCount>{post.likeCount}</LikeCount>
           </LikeInfo>
         </UserAndLikeInfo>
+        {post.userId === user.userId && (
+          <>
+            <DeletePost
+              onClick={() => {
+                if (window.confirm("정말 삭제하시겠습니까?")) {
+                  deletePost(post.id);
+                }
+              }}
+            >
+              삭제
+            </DeletePost>
+          </>
+        )}
+
         <Content>
           <PostTitle>{post.title}</PostTitle>
           <PostContent>{post.content}</PostContent>
@@ -217,6 +240,14 @@ const LikeCount = styled.p`
   color: gray;
   font-size: 24px;
   margin-bottom: 5px;
+`;
+
+const DeletePost = styled.p`
+  font-size: 12px;
+  color: gray;
+  cursor: pointer;
+  margin: 10px 0;
+  width: fit-content;
 `;
 
 const Content = styled.div`

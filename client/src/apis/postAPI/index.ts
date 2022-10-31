@@ -103,6 +103,11 @@ const createPost = async (postForm: CreatePostFormType) => {
   return response.data;
 };
 
+const deletePost = async (postId: number) => {
+  const response = await instance.delete(`/posts/${postId}`);
+  return response.data;
+};
+
 const likePost = async (postId: number) => {
   try {
     const response = await instance.post(`/posts/${postId}/like`);
@@ -152,6 +157,7 @@ export const postService = {
   fetchPosts,
   fetchPost,
   createPost,
+  deletePost,
   likePost,
   unLikePost,
   createComment,
