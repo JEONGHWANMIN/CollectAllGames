@@ -21,7 +21,7 @@ import {
   ApiForbiddenResponse,
   ApiHeader,
 } from '@nestjs/swagger';
-import { bodySchemas, responseSchemas } from './schema';
+import { reqeustSchemas, responseSchemas } from './schema';
 
 @Controller('auth')
 @ApiTags('Auth API')
@@ -29,7 +29,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @ApiBody({
-    schema: bodySchemas.signup,
+    schema: reqeustSchemas.signup,
   })
   @ApiCreatedResponse({
     status: 201,
@@ -47,7 +47,7 @@ export class AuthController {
   }
 
   @ApiBody({
-    schema: bodySchemas.login,
+    schema: reqeustSchemas.login,
   })
   @ApiOkResponse({
     description: '로그인 성공',

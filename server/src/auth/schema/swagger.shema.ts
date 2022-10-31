@@ -20,7 +20,7 @@ export const responseSchemas = {
   },
 };
 
-export const bodySchemas = {
+export const reqeustSchemas = {
   signup: {
     type: 'object',
     properties: {

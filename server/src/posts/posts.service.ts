@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -252,32 +253,40 @@ export class PostsService {
   }
 
   async like(postId: number, userId: number) {
-    await this.prisma.like.create({
-      data: {
-        postId,
-        userId,
-      },
-    });
-
-    return {
-      message: 'Post liked successfully',
-      like: true,
-    };
-  }
-
-  async unlike(postId: number, userId: number) {
-    await this.prisma.like.delete({
-      where: {
-        userId_postId: {
+    try {
+      await this.prisma.like.create({
+        data: {
           postId,
           userId,
         },
-      },
-    });
+      });
 
-    return {
-      message: 'Post unliked successfully',
-      like: false,
-    };
+      return {
+        message: 'Post liked successfully',
+        like: true,
+      };
+    } catch {
+      throw new ConflictException('Post already liked');
+    }
+  }
+
+  async unlike(postId: number, userId: number) {
+    try {
+      await this.prisma.like.delete({
+        where: {
+          userId_postId: {
+            postId,
+            userId,
+          },
+        },
+      });
+
+      return {
+        message: 'Post unliked successfully',
+        like: false,
+      };
+    } catch {
+      throw new ConflictException('Post already unliked');
+    }
   }
 }

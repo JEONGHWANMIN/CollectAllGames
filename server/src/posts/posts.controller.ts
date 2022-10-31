@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBody,
+  ApiConflictResponse,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiHeader,
@@ -23,7 +24,7 @@ import { JwtPayload } from 'src/auth/types';
 import { GetCurrentUser, Public } from 'src/common/decorators';
 import { PostDto, UpdatePostDto } from './dto';
 import { PostsService } from './posts.service';
-import { bodySchemas, responseSchemas } from './schema';
+import { reqeustSchemas, responseSchemas } from './schema';
 
 @ApiTags('Post API')
 @Controller('posts')
@@ -38,6 +39,10 @@ export class PostsController {
     description: '게시글 목록 조회 성공',
     schema: responseSchemas.findAll,
   })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+  })
   @Get()
   @Public()
   findAll(
@@ -50,6 +55,10 @@ export class PostsController {
 
   @ApiNotFoundResponse({
     description: '게시글 조회가 실패했습니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
   })
   @ApiResponse({
     status: 200,
@@ -70,11 +79,14 @@ export class PostsController {
     description: 'Bearer token',
   })
   @ApiBody({
-    schema: bodySchemas.create,
+    schema: reqeustSchemas.create,
   })
   @ApiCreatedResponse({
     description: '게시글 작성 성공',
     schema: responseSchemas.create,
+  })
+  @ApiNotFoundResponse({
+    description: '게시글 등록이 실패했습니다.',
   })
   @Post('')
   create(@Body() dto: PostDto, @GetCurrentUser() user: JwtPayload) {
@@ -86,7 +98,7 @@ export class PostsController {
     description: 'Bearer token',
   })
   @ApiBody({
-    schema: bodySchemas.update,
+    schema: reqeustSchemas.update,
   })
   @ApiOkResponse({
     description: '글 수정 성공',
@@ -123,6 +135,18 @@ export class PostsController {
     return this.postsService.delete(postId, userId);
   }
 
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '좋아요 성공',
+    schema: responseSchemas.like,
+  })
+  @ApiConflictResponse({
+    description: '이미 좋아요를 눌렀습니다.',
+  })
   @Post(':postId/like')
   like(
     @Param('postId', ParseIntPipe) postId: number,
@@ -131,6 +155,18 @@ export class PostsController {
     return this.postsService.like(postId, userId);
   }
 
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '좋아요 삭제 성공',
+    schema: responseSchemas.unlike,
+  })
+  @ApiConflictResponse({
+    description: '좋아요를 누르지 않았습니다.',
+  })
   @Delete(':postId/like')
   unlike(
     @Param('postId', ParseIntPipe) postId: number,

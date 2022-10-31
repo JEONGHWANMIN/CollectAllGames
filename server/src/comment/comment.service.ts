@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CommentDto } from './dto';
 
@@ -27,7 +27,9 @@ export class CommentService {
     });
 
     if (comment.userId !== userId) {
-      throw new Error('You are not authorized to delete this comment');
+      throw new ForbiddenException(
+        'You are not authorized to delete this comment',
+      );
     }
 
     await this.prisma.comment.delete({
@@ -49,7 +51,9 @@ export class CommentService {
     });
 
     if (comment.userId !== userId) {
-      throw new Error('You are not authorized to update this comment');
+      throw new ForbiddenException(
+        'You are not authorized to update this comment',
+      );
     }
 
     await this.prisma.comment.update({

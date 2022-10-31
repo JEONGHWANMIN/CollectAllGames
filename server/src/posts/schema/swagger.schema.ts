@@ -12,28 +12,25 @@ export const responseSchemas = {
             content: { type: 'string' },
             link: { type: 'string' },
             imgUrl: { type: 'string' },
-            videoUrl: { type: 'string' },
             createdAt: { type: 'string' },
             updatedAt: { type: 'string' },
             userId: { type: 'number' },
-            user: {
-              type: 'object',
-              properties: {
-                username: { type: 'string' },
-              },
+            username: { type: 'string' },
+            view: { type: 'number' },
+            commentCount: { type: 'number' },
+            likeCount: { type: 'number' },
+            tag: {
+              type: 'array',
+              items: { type: 'string' },
             },
-            _count: {
-              type: 'object',
-              properties: {
-                comment: { type: 'number' },
-              },
-            },
+            like: { type: 'boolean' },
           },
         },
       },
       totalPage: { type: 'number' },
     },
   },
+
   findOne: {
     type: 'object',
     properties: {
@@ -46,15 +43,12 @@ export const responseSchemas = {
           link: { type: 'string' },
           imgUrl: { type: 'string' },
           videoUrl: { type: 'string' },
+          view: { type: 'number' },
           createdAt: { type: 'string' },
           updatedAt: { type: 'string' },
+          ogTitle: { type: 'string' },
           userId: { type: 'number' },
-          user: {
-            type: 'object',
-            properties: {
-              username: { type: 'string' },
-            },
-          },
+          username: { type: 'string' },
           comment: {
             type: 'array',
             items: {
@@ -65,12 +59,8 @@ export const responseSchemas = {
                 createdAt: { type: 'string' },
                 updatedAt: { type: 'string' },
                 userId: { type: 'number' },
-                user: {
-                  type: 'object',
-                  properties: {
-                    username: { type: 'string' },
-                  },
-                },
+                username: { type: 'string' },
+                postId: { type: 'number' },
               },
             },
           },
@@ -78,6 +68,7 @@ export const responseSchemas = {
       },
     },
   },
+
   create: {
     type: 'object',
     properties: {
@@ -97,6 +88,7 @@ export const responseSchemas = {
       },
     },
   },
+
   delete: {
     type: 'object',
     properties: {
@@ -106,15 +98,38 @@ export const responseSchemas = {
       },
     },
   },
+
+  like: {
+    type: 'object',
+    properties: {
+      message: {
+        type: 'string',
+        example: 'Post liked successfully',
+      },
+      like: { type: 'boolean' },
+    },
+  },
+
+  unlike: {
+    type: 'object',
+    properties: {
+      message: {
+        type: 'string',
+        example: 'Post unliked successfully',
+      },
+      like: { type: 'boolean' },
+    },
+  },
 };
 
-export const bodySchemas = {
+export const reqeustSchemas = {
   create: {
     type: 'object',
     properties: {
       title: { type: 'string' },
       content: { type: 'string' },
       link: { type: 'string' },
+      tag: { type: 'array', items: { type: 'string' } },
     },
   },
   update: {
