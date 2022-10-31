@@ -39,7 +39,7 @@ function Write() {
     },
     onError: (error: AxiosError) => {
       if (error.response?.status === 404) {
-        alert(error);
+        alert("링크가 잘못되었습니다. 유튜브 공유하기 링크를 복사해주세요.");
       }
     },
   });
