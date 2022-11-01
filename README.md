@@ -29,6 +29,7 @@
 ### Deploy (v1)
 
 FrontEnd : S3, CloudFront, Route53
+
 BackEnd : EC2 Nginx
 
 [배포주소](https://www.collectly.site/)
