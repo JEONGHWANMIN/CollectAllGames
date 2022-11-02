@@ -1,20 +1,15 @@
 import styled from "@emotion/styled";
-import { useMutation } from "@tanstack/react-query";
-import { AxiosError } from "axios";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { postService } from "src/apis/postAPI";
 import FullLoading from "src/components/Common/FullLoading";
 import LabelInput from "src/components/Common/LabelInput";
 import SubmitButton from "src/components/Common/SubmitButton";
 import Layout from "src/components/Layout/Layout";
 import TagsBox from "src/components/Write/TagsBox";
+import usePostCreateMutation from "src/hooks/mutaion/usePostCreateMutation";
 import { colors } from "src/style/colors";
 import { WriteFormType } from "src/types/form";
 
 function Write() {
-  const navigate = useNavigate();
-
   const [form, setForm] = useState<WriteFormType>({
     title: "",
     content: "",
@@ -32,17 +27,7 @@ function Write() {
 
   const { title, content, link, tags } = form;
 
-  const { mutate: createPost, isLoading } = useMutation(postService.createPost, {
-    onSuccess: () => {
-      alert("게시물이 등록되었습니다.");
-      navigate("/");
-    },
-    onError: (error: AxiosError) => {
-      if (error.response?.status === 404) {
-        alert("링크가 잘못되었습니다. 유튜브 공유하기 링크를 복사해주세요.");
-      }
-    },
-  });
+  const { mutate: createPost, isLoading } = usePostCreateMutation();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

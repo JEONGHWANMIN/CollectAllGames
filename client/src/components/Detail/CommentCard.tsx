@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import React, { Dispatch, SetStateAction, useState } from "react";
-import { postService } from "src/apis/postAPI";
 import { useUserState } from "src/context/userContext";
+import useCommentMutaion from "src/hooks/mutaion/useCommentMutaion";
 import { colors } from "src/style/colors";
 import { UserState } from "src/types/user";
 import { displayedAt } from "src/utils/convertToTIme";
@@ -21,24 +21,19 @@ function CommentCard({ comment }: Props) {
 
   const queryClient = useQueryClient();
 
-  const { mutate: deleteComment } = useMutation(
-    (commentId: number) => postService.deleteComment(commentId),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["posts", comment.postId]);
-      },
-    }
-  );
+  const DeleteSuccessOtpion = {
+    onSuccess: () => queryClient.invalidateQueries(["post", comment.postId]),
+  };
 
-  const { mutate: updateComment } = useMutation(
-    (commentId: number) => postService.updateComment(commentId, { content }),
-    {
-      onSuccess: () => {
-        setIsEdit(false);
-        queryClient.invalidateQueries(["posts", comment.postId]);
-      },
-    }
-  );
+  const EditSuccessOtpion = {
+    onSuccess: () => {
+      setIsEdit(false);
+      queryClient.invalidateQueries(["post", comment.postId]);
+    },
+  };
+
+  const { updateComment } = useCommentMutaion(EditSuccessOtpion);
+  const { deleteComment } = useCommentMutaion(DeleteSuccessOtpion);
 
   return (
     <Container>
@@ -88,7 +83,7 @@ function CommentCard({ comment }: Props) {
       {isEdit && (
         <CommentReviseBtn
           onClick={() => {
-            updateComment(comment.id);
+            updateComment({ commentId: Number(comment.id), comment: content });
           }}
         >
           수정완료

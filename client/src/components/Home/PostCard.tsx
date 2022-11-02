@@ -5,10 +5,10 @@ import { IoGameControllerOutline, IoGameController } from "react-icons/io5";
 import PostTag from "../Common/PostTag";
 import { Post } from "src/types/post";
 import { colors } from "src/style/colors";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { postService } from "src/apis/postAPI";
+import { useQueryClient } from "@tanstack/react-query";
 import { getCookie } from "src/utils/cookie";
 import { useNavigate } from "react-router-dom";
+import useLikeMutation from "src/hooks/mutaion/useLikeMutation";
 
 const userImgSrc = "https://morethanmin-remotto.herokuapp.com/images/default-user.jpg";
 
@@ -18,21 +18,14 @@ interface Props {
 
 function PostCard({ post }: Props) {
   const navigate = useNavigate();
+
   const queryClient = useQueryClient();
 
   const onSuccessOption = {
     onSuccess: () => queryClient.invalidateQueries(["posts"]),
   };
 
-  const { mutate: LikePost } = useMutation(
-    (postId: number) => postService.likePost(postId),
-    onSuccessOption
-  );
-
-  const { mutate: UnLikePost } = useMutation(
-    (postId: number) => postService.unLikePost(postId),
-    onSuccessOption
-  );
+  const { LikePost, UnLikePost } = useLikeMutation(onSuccessOption);
 
   return (
     <Container>

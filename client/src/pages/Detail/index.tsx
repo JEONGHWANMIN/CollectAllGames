@@ -1,13 +1,16 @@
 import styled from "@emotion/styled";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { IoGameController, IoGameControllerOutline } from "react-icons/io5";
 import { useNavigate, useParams } from "react-router-dom";
-import { postService } from "src/apis/postAPI";
 import PostTag from "src/components/Common/PostTag";
 import CommentCard from "src/components/Detail/CommentCard";
 import Layout from "src/components/Layout/Layout";
 import { useUserState } from "src/context/userContext";
+import useCommentMutaion from "src/hooks/mutaion/useCommentMutaion";
+import useLikeMutaion from "src/hooks/mutaion/useLikeMutation";
+import usePostMutation from "src/hooks/mutaion/usePostDeleteMutation";
+import useGetPostQuery from "src/hooks/query/useGetPostQuery";
 import { colors } from "src/style/colors";
 import { UserState } from "src/types/user";
 import { displayedAt } from "src/utils/convertToTIme";
@@ -18,47 +21,36 @@ const userImgSrc = "https://morethanmin-remotto.herokuapp.com/images/default-use
 function Detail() {
   const { id } = useParams();
   const navigate = useNavigate();
+
   const [user] = useUserState() as [UserState, Dispatch<SetStateAction<UserState>>];
   const [comment, setComment] = useState("");
 
-  const { data: post, isLoading } = useQuery(["posts", Number(id)], () => {
-    return postService.fetchPost(Number(id));
-  });
+  const { data: post, isLoading } = useGetPostQuery(Number(id));
 
   const queryClient = useQueryClient();
 
-  const onSuccessOption = {
-    onSuccess: () => queryClient.invalidateQueries(["posts", Number(id)]),
+  const LikeSuccessOption = {
+    onSuccess: () => queryClient.invalidateQueries(["post", Number(id)]),
   };
 
-  const { mutate: LikePost } = useMutation(
-    (postId: number) => postService.likePost(postId),
-    onSuccessOption
-  );
+  const createCommentSuccessOption = {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["post", Number(id)]);
+      setComment("");
+    },
+  };
 
-  const { mutate: UnLikePost } = useMutation(
-    (postId: number) => postService.unLikePost(postId),
-    onSuccessOption
-  );
-
-  const { mutate: createComment } = useMutation(
-    (comment: string) => postService.createComment(Number(id), { content: comment }),
-    {
-      onSuccess: () => {
-        setComment("");
-        queryClient.invalidateQueries(["posts", Number(id)]);
-      },
-    }
-  );
-
-  const { mutate: deletePost } = useMutation((postId: number) => postService.deletePost(postId), {
+  const deletePostSuccessOption = {
     onSuccess: () => {
       navigate("/");
     },
-  });
+  };
+
+  const { mutate: deletePost } = usePostMutation(deletePostSuccessOption);
+  const { LikePost, UnLikePost } = useLikeMutaion(LikeSuccessOption);
+  const { createComment } = useCommentMutaion(createCommentSuccessOption);
 
   if (isLoading) return <div>로딩중</div>;
-
   if (!post) return <div>존재하지 않는 게시물입니다.</div>;
 
   return (
@@ -165,7 +157,7 @@ function Detail() {
               if (comment.trim() === "") {
                 return alert("댓글을 입력해주세요.");
               }
-              createComment(comment);
+              createComment({ postId: Number(post.id), comment });
             }}
           >
             입력
