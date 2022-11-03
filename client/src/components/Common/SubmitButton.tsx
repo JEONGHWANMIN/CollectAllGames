@@ -14,6 +14,7 @@ function SubmitButton({ name, onClick }: Props) {
 export default SubmitButton;
 
 const Button = styled.button`
+  border: none;
   width: 60%;
   height: 50px;
   color: white;
@@ -22,4 +23,8 @@ const Button = styled.button`
   border-radius: 10px;
   font-size: 16px;
   margin-top: 10px;
+
+  :hover {
+    opacity: 0.8;
+  }
 `;
