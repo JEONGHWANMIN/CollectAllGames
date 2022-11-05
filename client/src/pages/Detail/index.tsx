@@ -1,50 +1,28 @@
 import styled from "@emotion/styled";
-import React, { Dispatch, SetStateAction } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import LoadingSpinner from "src/components/Common/LoadingSpinner";
 import TagList from "src/components/Common/TagList";
 import UserAndLikeInfo from "src/components/Common/UserAndLikeInfo";
 import CommentInputBox from "src/components/Detail/CommentInputBox";
 import CommentList from "src/components/Detail/CommentList";
+import DetailAuthButton from "src/components/Detail/DetailAuthButton";
 import Layout from "src/components/Layout/Layout";
-import { useUserState } from "src/context/userContext";
-import usePostMutation from "src/hooks/mutaion/usePostDeleteMutation";
 import useGetPostQuery from "src/hooks/query/useGetPostQuery";
-import { UserState } from "src/types/user";
 
 function Detail() {
   const { id } = useParams();
-  const navigate = useNavigate();
-
-  const [user] = useUserState() as [UserState, Dispatch<SetStateAction<UserState>>];
 
   const { data: post, isLoading } = useGetPostQuery(Number(id));
 
-  const deletePostSuccessOption = {
-    onSuccess: () => {
-      navigate("/");
-    },
-  };
+  if (isLoading) return <LoadingSpinner />;
 
-  const { mutate: deletePost } = usePostMutation(deletePostSuccessOption);
-
-  if (isLoading) return <div>로딩중</div>;
   if (!post) return <div>존재하지 않는 게시물입니다.</div>;
 
   return (
     <Layout>
       <CardContainer>
         <UserAndLikeInfo post={post} type="post" />
-        {post.userId === user.userId && (
-          <DeletePost
-            onClick={() => {
-              if (window.confirm("정말 삭제하시겠습니까?")) {
-                deletePost(post.id);
-              }
-            }}
-          >
-            삭제
-          </DeletePost>
-        )}
+        <DetailAuthButton postId={post.id} userId={post.userId} />
         <Content>
           <PostTitle>{post.title}</PostTitle>
           <PostContent>{post.content}</PostContent>
@@ -86,14 +64,6 @@ const CardContainer = styled.div`
   margin-bottom: 10px;
 `;
 
-const DeletePost = styled.p`
-  font-size: 12px;
-  color: gray;
-  cursor: pointer;
-  margin: 10px 0;
-  width: fit-content;
-`;
-
 const Content = styled.div`
   display: flex;
   flex-direction: column;
@@ -103,6 +73,7 @@ const Content = styled.div`
 const PostTitle = styled.h1`
   font-size: 20px;
 `;
+
 const PostContent = styled.p`
   font-size: 15px;
   margin-bottom: 10px;
@@ -128,6 +99,7 @@ const ViewAndComment = styled.div`
   gap: 10px;
   margin-top: 10px;
 `;
+
 const Count = styled.p`
   color: gray;
   font-size: 13px;
