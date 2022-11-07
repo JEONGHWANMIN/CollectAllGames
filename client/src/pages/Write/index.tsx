@@ -90,7 +90,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 150px;
+  margin-top: 10%;
   width: 100%;
   padding-bottom: 50px;
   background-color: white;
