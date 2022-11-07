@@ -22,6 +22,7 @@ const Container = styled.div`
   background-color: ${colors.mainColor};
   border-radius: 15px;
   color: white;
+  white-space: nowrap;
 
   p {
     font-size: 12px;
