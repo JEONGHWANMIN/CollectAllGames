@@ -19,10 +19,12 @@ function TagsBox({ tags, setForm }: Props) {
       alert("이미 존재하는 태그입니다.");
       return;
     }
+
     if (tags.length >= 3) {
       alert("태그는 최대 3개까지만 등록할 수 있습니다.");
       return;
     }
+
     setForm((prev) => ({
       ...prev,
       tags: [...prev.tags, tag],
@@ -81,9 +83,12 @@ const TagOptions = styled.div`
   border: solid 2px lightgray;
   border-radius: 5px;
   padding: 10px;
-  resize: none;
   color: gray;
   cursor: pointer;
+
+  p {
+    font-size: 14px;
+  }
 `;
 
 const Label = styled.label`
@@ -116,6 +121,7 @@ const TagItem = styled.div`
   color: gray;
   cursor: pointer;
   background-color: white;
+  font-size: 14px;
 
   &:hover {
     background-color: lightgray;
