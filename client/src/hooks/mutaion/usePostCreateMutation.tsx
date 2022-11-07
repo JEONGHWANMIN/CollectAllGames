@@ -11,7 +11,7 @@ function usePostCreateMutation() {
       navigate("/");
     },
     onError: (error: AxiosError) => {
-      if (error.response?.status === 404) {
+      if (error.response?.status === 404 || error.response?.status === 400) {
         alert("링크가 잘못되었습니다. 유튜브 공유하기 링크를 복사해주세요.");
       }
     },
