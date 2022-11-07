@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
@@ -168,6 +169,20 @@ export class PostsService {
   }
 
   async create(dto: PostDto, user: JwtPayload) {
+    if (!dto.link.includes('youtu.be') || !dto.link.includes('https')) {
+      throw new BadRequestException('Invalid link');
+    }
+
+    const options = { url: dto.link };
+
+    let result1;
+    try {
+      const { result }: any = await ogs(options);
+      result1 = result;
+    } catch (e) {
+      throw new NotFoundException('Link not found');
+    }
+
     const tagMap = dto.tags.map((tag) => {
       return {
         tag: {
@@ -182,16 +197,6 @@ export class PostsService {
         },
       };
     });
-
-    const options = { url: dto.link };
-
-    let result1;
-    try {
-      const { result }: any = await ogs(options);
-      result1 = result;
-    } catch (e) {
-      throw new NotFoundException('Link not found');
-    }
 
     await this.prisma.post.create({
       data: {
