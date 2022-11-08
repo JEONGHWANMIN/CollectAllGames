@@ -37,3 +37,7 @@ BackEnd : EC2 Nginx
 ### Project journal
 
 [프로젝트 일지](https://checkered-lint-481.notion.site/CollectAllGames-55edd12a611c42ae9c517b8dd07932ab)
+
+### Project Excute
+
+작성 예정...
