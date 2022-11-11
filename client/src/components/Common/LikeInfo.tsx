@@ -1,6 +1,8 @@
 import styled from "@emotion/styled";
 import React from "react";
 import { IoGameController, IoGameControllerOutline } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
+import { useDialog } from "src/context/dialogContext";
 import useLikeMutation from "src/hooks/mutaion/useLikeMutation";
 import { colors } from "src/style/colors";
 import { getCookie } from "src/utils/cookie";
@@ -13,8 +15,9 @@ interface Props {
 }
 
 function LikeInfo({ like, likeCount, postId, type }: Props) {
+  const navigate = useNavigate();
   const { LikePost, UnLikePost } = useLikeMutation(type, postId);
-
+  const { open } = useDialog();
   return (
     <LikeInfoBox>
       <LikeIcon>
@@ -23,7 +26,13 @@ function LikeInfo({ like, likeCount, postId, type }: Props) {
             color={colors.mainColor}
             onClick={() => {
               if (!getCookie("accessToken")) {
-                return alert("로그인이 필요한 서비스입니다.");
+                open({
+                  title: "로그인이 필요한 서비스입니다.",
+                  content: "로그인 페이지로 이동하시겠습니까?",
+                  onConfirm: () => navigate("/login"),
+                  onClose: () => {},
+                });
+                return;
               }
               UnLikePost(postId);
             }}
@@ -33,7 +42,13 @@ function LikeInfo({ like, likeCount, postId, type }: Props) {
             color={"gray"}
             onClick={() => {
               if (!getCookie("accessToken")) {
-                return alert("로그인이 필요한 서비스입니다.");
+                open({
+                  title: "로그인이 필요한 서비스입니다.",
+                  content: "로그인 페이지로 이동하시겠습니까?",
+                  onConfirm: () => navigate("/login"),
+                  onClose: () => {},
+                });
+                return;
               }
               LikePost(postId);
             }}
