@@ -109,21 +109,13 @@ const deletePost = async (postId: number) => {
 };
 
 const likePost = async (postId: number) => {
-  try {
-    const response = await instance.post(`/posts/${postId}/like`);
-    return response.data;
-  } catch (e) {
-    console.log(e);
-  }
+  const response = await instance.post(`/posts/${postId}/like`);
+  return response.data;
 };
 
 const unLikePost = async (postId: number) => {
-  try {
-    const response = await instance.delete(`/posts/${postId}/like`);
-    return response.data;
-  } catch (e) {
-    console.log(e);
-  }
+  const response = await instance.delete(`/posts/${postId}/like`);
+  return response.data;
 };
 
 const createComment = async (postId: number, commentForm: CommentForm) => {
