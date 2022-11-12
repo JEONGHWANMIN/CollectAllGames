@@ -1,6 +1,8 @@
 import styled from "@emotion/styled";
 import { useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDialog } from "src/context/dialogContext";
 import useCommentMutaion from "src/hooks/mutaion/useCommentMutaion";
 import { colors } from "src/style/colors";
 import { getCookie } from "src/utils/cookie";
@@ -10,6 +12,8 @@ interface Props {
 }
 
 function CommentInputBox({ postId }: Props) {
+  const { open } = useDialog();
+  const navigate = useNavigate();
   const [comment, setComment] = useState("");
 
   const queryClient = useQueryClient();
@@ -40,7 +44,13 @@ function CommentInputBox({ postId }: Props) {
           onClick={async (e) => {
             e.preventDefault();
             if (!getCookie("accessToken")) {
-              return alert("로그인이 필요한 서비스입니다.");
+              open({
+                title: "로그인이 필요한 서비스입니다.",
+                content: "로그인 페이지로 이동하시겠습니까?",
+                onConfirm: () => navigate("/login"),
+                onClose: () => {},
+              });
+              return;
             }
             if (comment.trim() === "") {
               return alert("댓글을 입력해주세요.");
