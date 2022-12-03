@@ -106,4 +106,9 @@ const CommentSubmit = styled.button`
   cursor: pointer;
   border-radius: 10px;
   font-size: 16px;
+  border: none;
+
+  &:hover {
+    scale: 0.99;
+  }
 `;
