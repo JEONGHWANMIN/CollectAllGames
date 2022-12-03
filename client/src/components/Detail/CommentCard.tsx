@@ -7,12 +7,11 @@ import { colors } from "src/style/colors";
 import { UserState } from "src/types/user";
 import { displayedAt } from "src/utils/convertToTIme";
 import { Comment } from "../../types/post";
+import userImgSrc from "src/assets/img/user-default-img.jpg";
 
 interface Props {
   comment: Comment;
 }
-
-const userImgSrc = "https://morethanmin-remotto.herokuapp.com/images/default-user.jpg";
 
 function CommentCard({ comment }: Props) {
   const [user] = useUserState() as [UserState, Dispatch<SetStateAction<UserState>>];
@@ -21,19 +20,19 @@ function CommentCard({ comment }: Props) {
 
   const queryClient = useQueryClient();
 
-  const DeleteSuccessOtpion = {
+  const DeleteSuccessOption = {
     onSuccess: () => queryClient.invalidateQueries(["post", comment.postId]),
   };
 
-  const EditSuccessOtpion = {
+  const EditSuccessOption = {
     onSuccess: () => {
       setIsEdit(false);
       queryClient.invalidateQueries(["post", comment.postId]);
     },
   };
 
-  const { updateComment } = useCommentMutaion(EditSuccessOtpion);
-  const { deleteComment } = useCommentMutaion(DeleteSuccessOtpion);
+  const { updateComment } = useCommentMutaion(EditSuccessOption);
+  const { deleteComment } = useCommentMutaion(DeleteSuccessOption);
 
   return (
     <Container>

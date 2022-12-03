@@ -3,13 +3,12 @@ import React from "react";
 import { Post } from "src/types/post";
 import { displayedAt } from "src/utils/convertToTIme";
 import LikeInfo from "./LikeInfo";
+import userImgSrc from "src/assets/img/user-default-img.jpg";
 
 interface Props {
   post: Post;
   type: "posts" | "post";
 }
-
-const userImgSrc = "https://morethanmin-remotto.herokuapp.com/images/default-user.jpg";
 
 function UserAndLikeInfo({ post, type }: Props) {
   return (
