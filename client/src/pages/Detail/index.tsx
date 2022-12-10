@@ -11,7 +11,6 @@ import useGetPostQuery from "src/hooks/query/useGetPostQuery";
 
 function Detail() {
   const { id } = useParams();
-
   const { data: post, isLoading } = useGetPostQuery(Number(id));
 
   if (isLoading) return <LoadingSpinner />;
@@ -30,7 +29,7 @@ function Detail() {
             allowFullScreen
             src={post.videoUrl}
             frameBorder="0"
-            title="dsads"
+            title="youtube"
             width={`100%`}
             height={340}
           ></iframe>

@@ -3,7 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDialog } from "src/context/dialogContext";
-import useCommentMutaion from "src/hooks/mutaion/useCommentMutaion";
+import useCommentMutaion from "src/hooks/mutation/useCommentMutation";
 import { colors } from "src/style/colors";
 import { getCookie } from "src/utils/cookie";
 

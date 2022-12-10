@@ -5,7 +5,7 @@ import LabelInput from "src/components/Common/LabelInput";
 import SubmitButton from "src/components/Common/SubmitButton";
 import Layout from "src/components/Layout/Layout";
 import TagsBox from "src/components/Write/TagsBox";
-import usePostCreateMutation from "src/hooks/mutaion/usePostCreateMutation";
+import usePostCreateMutation from "src/hooks/mutation/usePostCreateMutation";
 import { colors } from "src/style/colors";
 import { WriteFormType } from "src/types/form";
 

@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { useQueryClient } from "@tanstack/react-query";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { useUserState } from "src/context/userContext";
-import useCommentMutaion from "src/hooks/mutaion/useCommentMutaion";
+import useCommentMutation from "src/hooks/mutation/useCommentMutation";
 import { colors } from "src/style/colors";
 import { UserState } from "src/types/user";
 import { displayedAt } from "src/utils/convertToTIme";
@@ -31,8 +31,8 @@ function CommentCard({ comment }: Props) {
     },
   };
 
-  const { updateComment } = useCommentMutaion(EditSuccessOption);
-  const { deleteComment } = useCommentMutaion(DeleteSuccessOption);
+  const { updateComment } = useCommentMutation(EditSuccessOption);
+  const { deleteComment } = useCommentMutation(DeleteSuccessOption);
 
   return (
     <Container>

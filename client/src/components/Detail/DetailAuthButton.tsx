@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import React, { Dispatch, SetStateAction } from "react";
 import { useUserState } from "src/context/userContext";
 import { UserState } from "src/types/user";
-import usePostMutation from "src/hooks/mutaion/usePostDeleteMutation";
+import usePostMutation from "src/hooks/mutation/usePostDeleteMutation";
 
 interface Props {
   postId: number;

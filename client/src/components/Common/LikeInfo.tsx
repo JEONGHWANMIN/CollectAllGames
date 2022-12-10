@@ -3,7 +3,7 @@ import React from "react";
 import { IoGameController, IoGameControllerOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { useDialog } from "src/context/dialogContext";
-import useLikeMutation from "src/hooks/mutaion/useLikeMutation";
+import useLikeMutation from "src/hooks/mutation/useLikeMutation";
 import { colors } from "src/style/colors";
 import { getCookie } from "src/utils/cookie";
 

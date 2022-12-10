@@ -1,5 +1,5 @@
-import styled from "@emotion/styled";
 import React from "react";
+import styled from "@emotion/styled";
 import { Post } from "src/types/post";
 import { useNavigate } from "react-router-dom";
 import UserAndLikeInfo from "../Common/UserAndLikeInfo";
