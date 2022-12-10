@@ -1,24 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-
 import styled from "@emotion/styled";
 import React, { useEffect } from "react";
 import PostCard from "src/components/Home/PostCard";
 import Layout from "src/components/Layout/Layout";
-import { useInView } from "react-intersection-observer";
 import { Post } from "src/types/post";
 import { removeCookie } from "src/utils/cookie";
-import useGetPostsQuery from "src/hooks/query/useGetPostsQuery";
+import useHomeFetch from "src/hooks/useHomeFetch";
 
 function Home() {
-  const { ref, inView } = useInView();
-
-  const { data, fetchNextPage, hasNextPage } = useGetPostsQuery();
-
-  useEffect(() => {
-    if (inView && hasNextPage) {
-      fetchNextPage();
-    }
-  }, [inView]);
+  const { ref, data } = useHomeFetch();
 
   useEffect(() => {
     window.onbeforeunload = function (e) {
