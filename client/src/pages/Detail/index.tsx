@@ -8,6 +8,7 @@ import CommentList from "src/components/Detail/CommentList";
 import DetailAuthButton from "src/components/Detail/DetailAuthButton";
 import Layout from "src/components/Layout/Layout";
 import useGetPostQuery from "src/hooks/query/useGetPostQuery";
+import { Helmet } from "react-helmet-async";
 
 function Detail() {
   const { id } = useParams();
@@ -19,6 +20,14 @@ function Detail() {
 
   return (
     <Layout>
+      <Helmet>
+        <title>{post.title}</title>
+        <meta property="og:url" content={`https://www.collectly.site/detail/${post.id}`} />
+        <meta name="author" content={`${post.username}`} />
+        <meta property="og:title" content={post.title} />
+        <meta property="og:description" content={post.content} />
+        <meta property="og:image" content={post.imgUrl} />
+      </Helmet>
       <CardContainer>
         <UserAndLikeInfo post={post} type="post" />
         <DetailAuthButton postId={post.id} userId={post.userId} />
